@@ -4,6 +4,7 @@ import java.util.List;
 
 public class Profile {
 	
+	private String name;
 	private List<ClassAccess> classAccesses;
 	private List<FieldPermission> fieldPermissions;
 	private List<LayoutAssignment> layoutAssignments;
@@ -60,7 +61,12 @@ public class Profile {
 	public void setUserPermissions(List<UserPermission> userPermissions) {
 		this.userPermissions = userPermissions;
 	}
-	
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
 	
 
 }

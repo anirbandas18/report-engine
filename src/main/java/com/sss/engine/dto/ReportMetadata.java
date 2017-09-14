@@ -8,28 +8,28 @@ import org.springframework.stereotype.Component;
 @Component
 public class ReportMetadata {
 	
-	private Set<String> filter;
-	private String reportDumpLocation;
-	private ProfileMetadata profileMetadata;
-	public String getReportDumpLocation() {
-		return reportDumpLocation;
+	private Set<String> filters;
+	private String inputLocation;
+	private String outputLocation;
+	public Set<String> getFilters() {
+		return filters;
 	}
-	public void setReportDumpLocation(String reportDumpLocation) {
-		this.reportDumpLocation = reportDumpLocation;
+	public void setFilters(Set<String> filters) {
+		this.filters = filters;
 	}
-	public ProfileMetadata getProfileMetadata() {
-		return profileMetadata;
+	public String getInputLocation() {
+		return inputLocation;
 	}
-	public void setProfileMetadata(ProfileMetadata profileMetadata) {
-		this.profileMetadata = profileMetadata;
+	public void setInputLocation(String inputLocation) {
+		this.inputLocation = inputLocation;
+	}
+	public String getOutputLocation() {
+		return outputLocation;
+	}
+	public void setOutputLocation(String outputLocation) {
+		this.outputLocation = outputLocation;
 	}
 	
-	public Set<String> getFilter() {
-		return filter;
-	}
-	public void setFilter(Set<String> filter) {
-		this.filter = filter;
-	}
 	
 
 }

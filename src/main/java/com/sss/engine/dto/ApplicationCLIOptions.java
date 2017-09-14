@@ -14,19 +14,19 @@ public class ApplicationCLIOptions {
 	private String input;
 	@Value("output")
 	private String output;
-	@Value("filters")
-	private String filters;
+	@Value("filter")
+	private String filter;
 	public String getHelp() {
 		return help;
 	}
 	public void setHelp(String help) {
 		this.help = help;
 	}
-	public String getFilters() {
-		return filters;
+	public String getFilter() {
+		return filter;
 	}
-	public void setFilters(String filters) {
-		this.filters = filters;
+	public void setFilter(String filter) {
+		this.filter = filter;
 	}
 	public String getInput() {
 		return input;

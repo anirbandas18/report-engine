@@ -13,16 +13,23 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.ObjectError;
 
-import com.sss.engine.core.ApplicationCLIOptionValidator;
+import com.sss.engine.core.ApplicationArgsToMetadataConverter;
+import com.sss.engine.core.ApplicationArgsValidator;
 import com.sss.engine.dto.ApplicationCLIOptions;
+import com.sss.engine.dto.ReportMetadata;
+import com.sss.engine.service.FileSystemService;
 
 @Configuration
 public class ApplicationCLI implements ApplicationRunner, ExitCodeGenerator {
 	
 	@Autowired
-	private ApplicationCLIOptionValidator validator;
+	private ApplicationArgsValidator validator;
+	@Autowired
+	private ApplicationArgsToMetadataConverter converter;
 	@Autowired
 	private ApplicationCLIOptions options;
+	@Autowired
+	private FileSystemService fileSys;
 	@Value("0")
 	private Integer successCode;
 	@Value("2")
@@ -42,7 +49,12 @@ public class ApplicationCLI implements ApplicationRunner, ExitCodeGenerator {
 				String message = globalErrors.stream().map(ObjectError::getDefaultMessage).collect(Collectors.joining(","));
 				System.out.println(message);
 			} else {
-				System.out.println("Success");
+				ReportMetadata reportMetadata = converter.convert(args);
+				System.out.println(reportMetadata);
+				List<String> fileLocations = fileSys.readFilesFromDirectory(reportMetadata.getInputLocation());
+				for(String fl : fileLocations) {
+					System.out.println(fl);
+				}
 			}
 		}
 	}

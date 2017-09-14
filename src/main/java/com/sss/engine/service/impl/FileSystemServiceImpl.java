@@ -8,21 +8,29 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+
+import com.sss.engine.core.exception.InvalidDirectoryPathException;
 import com.sss.engine.dto.FileWrapper;
 import com.sss.engine.service.FileSystemService;
 
+@Component
 public class FileSystemServiceImpl implements FileSystemService {
 
 	@Override
-	public List<String> readFilesFromDirectory(String dirLocation) throws IOException {
+	public List<String> readFilesFromDirectory(String dirLocation) throws IOException, InvalidDirectoryPathException {
 		// TODO Auto-generated method stub
 		Path dirPath = Paths.get(dirLocation);
-		DirectoryStream<Path> filePaths = Files.newDirectoryStream(dirPath);
-		List<String> fileLocations = new ArrayList<>();
-		for(Path fp : filePaths) {
-			fileLocations.add(fp.toString());
+		if(Files.isDirectory(dirPath)) {
+			DirectoryStream<Path> filePaths = Files.newDirectoryStream(dirPath);
+			List<String> fileLocations = new ArrayList<>();
+			for(Path fp : filePaths) {
+				fileLocations.add(fp.toString());
+			}
+			return fileLocations;
+		} else {
+			throw new InvalidDirectoryPathException(dirLocation);
 		}
-		return fileLocations;
 	}
 
 	@Override
@@ -37,6 +45,22 @@ public class FileSystemServiceImpl implements FileSystemService {
 			filePath = Files.write(filePath, f.getContent());
 		}
 		return null;
+	}
+
+	@Override
+	public Boolean createDirectories(String dirLocation) throws IOException, InvalidDirectoryPathException {
+		// TODO Auto-generated method stub
+		Path dirPath = Paths.get(dirLocation);
+		if(Files.isDirectory(dirPath)) {
+			if(!Files.exists(dirPath)) {
+				Path x = Files.createDirectories(dirPath);
+				return x.equals(dirPath);
+			} else {
+				return false;
+			}
+		} else {
+			throw new InvalidDirectoryPathException(dirLocation);
+		}
 	}
 
 }

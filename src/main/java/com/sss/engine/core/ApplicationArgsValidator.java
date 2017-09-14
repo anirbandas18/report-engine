@@ -11,7 +11,7 @@ import org.springframework.validation.Validator;
 import com.sss.engine.dto.ApplicationCLIOptions;
 
 @Service
-public class ApplicationCLIOptionValidator implements Validator {
+public class ApplicationArgsValidator implements Validator {
 
 	@Autowired
 	private ApplicationCLIOptions options;

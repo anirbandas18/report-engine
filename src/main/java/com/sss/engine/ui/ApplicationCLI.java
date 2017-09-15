@@ -12,7 +12,6 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.ExitCodeGenerator;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.task.TaskExecutor;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.ObjectError;
@@ -27,8 +26,6 @@ import com.sss.engine.service.FileSystemService;
 @Configuration
 public class ApplicationCLI implements ApplicationRunner, ExitCodeGenerator {
 	
-	@Autowired
-	private TaskExecutor executor;
 	@Autowired
 	private ApplicationService service;
 	@Autowired

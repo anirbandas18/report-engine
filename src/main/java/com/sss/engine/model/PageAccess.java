@@ -25,6 +25,29 @@ public class PageAccess implements Comparable<PageAccess>{
 	public void setEnabled(Boolean enabled) {
 		this.enabled = enabled;
 	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((apexPage == null) ? 0 : apexPage.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		PageAccess other = (PageAccess) obj;
+		if (apexPage == null) {
+			if (other.apexPage != null)
+				return false;
+		} else if (!apexPage.equals(other.apexPage))
+			return false;
+		return true;
+	}
 	
 	
 	

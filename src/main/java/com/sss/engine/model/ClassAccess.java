@@ -29,5 +29,30 @@ public class ClassAccess implements Comparable<ClassAccess> {
 	public void setEnabled(Boolean enabled) {
 		this.enabled = enabled;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((apexClass == null) ? 0 : apexClass.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ClassAccess other = (ClassAccess) obj;
+		if (apexClass == null) {
+			if (other.apexClass != null)
+				return false;
+		} else if (!apexClass.equals(other.apexClass))
+			return false;
+		return true;
+	}
 	
 }

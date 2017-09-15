@@ -32,6 +32,29 @@ public class RecordTypeVisibility implements Comparable<RecordTypeVisibility>{
 	public void setRecordType(String recordType) {
 		this.recordType = recordType;
 	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((recordType == null) ? 0 : recordType.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		RecordTypeVisibility other = (RecordTypeVisibility) obj;
+		if (recordType == null) {
+			if (other.recordType != null)
+				return false;
+		} else if (!recordType.equals(other.recordType))
+			return false;
+		return true;
+	}
 
 	
 }

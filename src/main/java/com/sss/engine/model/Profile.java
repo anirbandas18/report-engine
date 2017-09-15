@@ -1,9 +1,13 @@
 package com.sss.engine.model;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import com.sss.engine.core.tags.Key;
 
 public class Profile {
 	
+	@Key
 	private String name;
 	private List<ClassAccess> classAccesses;
 	private List<FieldPermission> fieldPermissions;
@@ -67,6 +71,53 @@ public class Profile {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+	public Profile() {
+		this.classAccesses = new ArrayList<>();
+		this.fieldPermissions  = new ArrayList<>();
+		this.layoutAssignments = new ArrayList<>();
+		this.objectPermissions = new ArrayList<>();
+		this.pageAccesses = new ArrayList<>();
+		this.recordTypeVisibilities = new ArrayList<>();
+		this.tabVisibilities = new ArrayList<>();
+		this.userPermissions = new ArrayList<>();
+	}
 
+	public void addClassAccess(ClassAccess ca) {
+		this.classAccesses.add(ca);
+	}
+	
+	public void addFieldPermission(FieldPermission fp) {
+		this.fieldPermissions.add(fp);
+	}
+	
+	public void addLayoutAssignment(LayoutAssignment la) {
+		this.layoutAssignments.add(la);
+	}
+	
+	public void addObjectPermission(ObjectPermission op) {
+		this.objectPermissions.add(op);
+	}
+	
+	public void addPageAccess(PageAccess pa) {
+		this.pageAccesses.add(pa);
+	}
+	
+	public void addRecordTypeVisibility(RecordTypeVisibility rtv) {
+		this.recordTypeVisibilities.add(rtv);
+	}
+	
+	public void addTabVisibility(TabVisibility tv) {
+		this.tabVisibilities.add(tv);
+	}
+	
+	public void addUserPermission(UserPermission up) {
+		this.userPermissions.add(up);
+	}
+	@Override
+	public String toString() {
+		return "{name=" + name + ", classAccesses=" + classAccesses.size() + ", fieldPermissions=" + fieldPermissions.size()
+				+ ", layoutAssignments=" + layoutAssignments.size() + ", objectPermissions=" + objectPermissions.size()
+				+ ", pageAccesses=" + pageAccesses.size() + ", recordTypeVisibilities=" + recordTypeVisibilities.size()
+				+ ", tabVisibilities=" + tabVisibilities.size() + ", userPermissions=" + userPermissions.size() + "}";
+	}
 }

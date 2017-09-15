@@ -1,6 +1,9 @@
 package com.sss.engine.ui;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +12,7 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.ExitCodeGenerator;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.ObjectError;
@@ -17,11 +21,16 @@ import com.sss.engine.core.ApplicationArgsToMetadataConverter;
 import com.sss.engine.core.ApplicationArgsValidator;
 import com.sss.engine.dto.ApplicationCLIOptions;
 import com.sss.engine.dto.ReportMetadata;
+import com.sss.engine.service.ApplicationService;
 import com.sss.engine.service.FileSystemService;
 
 @Configuration
 public class ApplicationCLI implements ApplicationRunner, ExitCodeGenerator {
 	
+	@Autowired
+	private TaskExecutor executor;
+	@Autowired
+	private ApplicationService service;
 	@Autowired
 	private ApplicationArgsValidator validator;
 	@Autowired
@@ -52,9 +61,14 @@ public class ApplicationCLI implements ApplicationRunner, ExitCodeGenerator {
 				ReportMetadata reportMetadata = converter.convert(args);
 				System.out.println(reportMetadata);
 				List<String> fileLocations = fileSys.readFilesFromDirectory(reportMetadata.getInputLocation());
+				List<CompletableFuture<Set<String>>> parseJobs = new ArrayList<>();
 				for(String fl : fileLocations) {
-					System.out.println(fl);
+					// exeute thread per xml file for parsing
+					CompletableFuture<Set<String>> job = service.parseXML(fl, reportMetadata.getPropertyFilters());
+					parseJobs.add(job);
 				}
+				CompletableFuture<Void> allJobs = CompletableFuture.allOf(parseJobs.toArray(new CompletableFuture[parseJobs.size()]));
+				allJobs.join();
 			}
 		}
 	}

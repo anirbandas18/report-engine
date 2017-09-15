@@ -2,6 +2,7 @@ package com.sss.engine.service.impl;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -61,6 +62,16 @@ public class FileSystemServiceImpl implements FileSystemService {
 		} else {
 			throw new InvalidDirectoryPathException(dirLocation);
 		}
+	}
+
+	@Override
+	public String getLastSegmentFromPath(String path) {
+		// TODO Auto-generated method stub
+		String pathSeparator = FileSystems.getDefault().getSeparator();
+		String dirLocation = path.toString();
+		int beginIndex = dirLocation.lastIndexOf(pathSeparator) + 1;
+		String lastDirName = dirLocation.substring(beginIndex);
+		return lastDirName;
 	}
 
 }

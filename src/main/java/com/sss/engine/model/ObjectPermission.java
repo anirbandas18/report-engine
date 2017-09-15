@@ -1,5 +1,7 @@
 package com.sss.engine.model;
 
+import com.sss.engine.core.tags.ProfileField;
+@ProfileField(name = "objectpermissions")
 public class ObjectPermission implements Comparable<ObjectPermission>{
 
 	@Override

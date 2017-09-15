@@ -1,5 +1,8 @@
 package com.sss.engine.model;
 
+import com.sss.engine.core.tags.ProfileField;
+
+@ProfileField(name = "tabvisibilities")
 public class TabVisibility implements Comparable<TabVisibility>{
 
 	@Override

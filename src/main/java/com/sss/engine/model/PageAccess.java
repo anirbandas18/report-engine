@@ -1,5 +1,8 @@
 package com.sss.engine.model;
 
+import com.sss.engine.core.tags.ProfileField;
+
+@ProfileField(name = "pageaccesses")
 public class PageAccess implements Comparable<PageAccess>{
 
 	@Override

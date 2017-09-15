@@ -16,5 +16,7 @@ public interface FileSystemService {
 	public Boolean writeFilesToDirectory(String dirLocation, List<FileWrapper> files) throws IOException;
 	
 	public Boolean createDirectories(String dirPath)throws IOException, InvalidDirectoryPathException;
+	
+	public String getLastSegmentFromPath(String path) ;
 
 }

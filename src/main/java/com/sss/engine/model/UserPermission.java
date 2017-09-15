@@ -1,5 +1,8 @@
 package com.sss.engine.model;
 
+import com.sss.engine.core.tags.ProfileField;
+
+@ProfileField(name = "userpermissions")
 public class UserPermission implements Comparable<UserPermission>{
 
 	@Override

@@ -1,5 +1,8 @@
 package com.sss.engine.model;
 
+import com.sss.engine.core.tags.ProfileField;
+
+@ProfileField(name = "classaccesses")
 public class ClassAccess implements Comparable<ClassAccess> {
 	
 	private String apexClass;

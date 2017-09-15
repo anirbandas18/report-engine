@@ -1,5 +1,8 @@
 package com.sss.engine.model;
 
+import com.sss.engine.core.tags.ProfileField;
+
+@ProfileField(name = "fieldpermissions")
 public class FieldPermission implements Comparable<FieldPermission>{
 
 	private Boolean editable;

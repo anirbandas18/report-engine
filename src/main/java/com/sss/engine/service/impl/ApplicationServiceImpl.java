@@ -21,6 +21,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import com.sss.engine.core.tags.ProfileField;
+import com.sss.engine.model.old.Profile;
 import com.sss.engine.service.ApplicationService;
 import com.sss.engine.service.FileSystemService;
 
@@ -132,7 +133,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 				tagClass = validateTag(filters, tagName);
 				if(tagClass != null && tagClass.equals(parentModelClass)) {
 					// save parentModel to cache
-					System.out.println(parentModel.toString());
+					Profile profile = (Profile) parentModel;
+					//Profile x = repository.save(profile);
+					System.out.println(profile);
 				} else if(tagClass != null) {
 					final String modelPropertyClassName = currentModelPropertyClass.getSimpleName().toLowerCase();
 					List<Method> methods = new ArrayList<>(Arrays.asList(parentModelClass.getDeclaredMethods()));

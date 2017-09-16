@@ -1,6 +1,9 @@
-package com.sss.engine.model;
+package com.sss.engine.model.old;
 
-public class RecordTypeVisibility implements ProfileProperty, Comparable<RecordTypeVisibility>{
+import com.sss.engine.core.tags.ProfileField;
+
+@ProfileField(name = "recordtypevisibilities")
+public class RecordTypeVisibility implements Comparable<RecordTypeVisibility>{
 
 	@Override
 	public int compareTo(RecordTypeVisibility o) {
@@ -32,7 +35,7 @@ public class RecordTypeVisibility implements ProfileProperty, Comparable<RecordT
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = super.hashCode();
+		int result = 1;
 		result = prime * result + ((recordType == null) ? 0 : recordType.hashCode());
 		return result;
 	}
@@ -40,7 +43,7 @@ public class RecordTypeVisibility implements ProfileProperty, Comparable<RecordT
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (!super.equals(obj))
+		if (obj == null)
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
@@ -51,11 +54,6 @@ public class RecordTypeVisibility implements ProfileProperty, Comparable<RecordT
 		} else if (!recordType.equals(other.recordType))
 			return false;
 		return true;
-	}
-	@Override
-	public Object getProperty() {
-		// TODO Auto-generated method stub
-		return this;
 	}
 
 	

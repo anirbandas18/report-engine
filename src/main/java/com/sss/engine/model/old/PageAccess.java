@@ -1,12 +1,16 @@
-package com.sss.engine.model;
+package com.sss.engine.model.old;
 
-public class PageAccess implements ProfileProperty,Comparable<PageAccess>{
+import com.sss.engine.core.tags.ProfileField;
+
+@ProfileField(name = "pageaccesses")
+public class PageAccess implements Comparable<PageAccess>{
 
 	@Override
 	public int compareTo(PageAccess o) {
 		// TODO Auto-generated method stub
 		return this.apexPage.compareTo(o.getApexPage());
 	}
+	
 	private String apexPage;
 	private Boolean enabled;
 	public String getApexPage() {
@@ -24,7 +28,7 @@ public class PageAccess implements ProfileProperty,Comparable<PageAccess>{
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = super.hashCode();
+		int result = 1;
 		result = prime * result + ((apexPage == null) ? 0 : apexPage.hashCode());
 		return result;
 	}
@@ -32,7 +36,7 @@ public class PageAccess implements ProfileProperty,Comparable<PageAccess>{
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (!super.equals(obj))
+		if (obj == null)
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
@@ -43,11 +47,6 @@ public class PageAccess implements ProfileProperty,Comparable<PageAccess>{
 		} else if (!apexPage.equals(other.apexPage))
 			return false;
 		return true;
-	}
-	@Override
-	public Object getProperty() {
-		// TODO Auto-generated method stub
-		return this;
 	}
 	
 	

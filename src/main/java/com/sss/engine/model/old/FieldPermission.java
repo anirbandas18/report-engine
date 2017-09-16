@@ -1,7 +1,9 @@
-package com.sss.engine.model;
+package com.sss.engine.model.old;
 
+import com.sss.engine.core.tags.ProfileField;
 
-public class FieldPermission implements ProfileProperty, Comparable<FieldPermission>{
+@ProfileField(name = "fieldpermissions")
+public class FieldPermission implements Comparable<FieldPermission>{
 
 	private Boolean editable;
 	private String field;
@@ -29,19 +31,18 @@ public class FieldPermission implements ProfileProperty, Comparable<FieldPermiss
 	public void setReadable(Boolean readable) {
 		this.readable = readable;
 	}
-	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((editable == null) ? 0 : editable.hashCode());
+		int result = 1;
+		result = prime * result + ((field == null) ? 0 : field.hashCode());
 		return result;
 	}
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (!super.equals(obj))
+		if (obj == null)
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
@@ -53,10 +54,6 @@ public class FieldPermission implements ProfileProperty, Comparable<FieldPermiss
 			return false;
 		return true;
 	}
-	@Override
-	public Object getProperty() {
-		// TODO Auto-generated method stub
-		return this;
-	}
+	
 	
 }

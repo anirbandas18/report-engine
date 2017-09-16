@@ -1,7 +1,8 @@
-package com.sss.engine.model;
+package com.sss.engine.model.old;
 
-
-public class ObjectPermission implements ProfileProperty, Comparable<ObjectPermission>{
+import com.sss.engine.core.tags.ProfileField;
+@ProfileField(name = "objectpermissions")
+public class ObjectPermission implements Comparable<ObjectPermission>{
 
 	@Override
 	public int compareTo(ObjectPermission o) {
@@ -58,12 +59,10 @@ public class ObjectPermission implements ProfileProperty, Comparable<ObjectPermi
 	public void setObject(String object) {
 		this.object = object;
 	}
-	
-	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = super.hashCode();
+		int result = 1;
 		result = prime * result + ((object == null) ? 0 : object.hashCode());
 		return result;
 	}
@@ -71,7 +70,7 @@ public class ObjectPermission implements ProfileProperty, Comparable<ObjectPermi
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (!super.equals(obj))
+		if (obj == null)
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
@@ -83,11 +82,7 @@ public class ObjectPermission implements ProfileProperty, Comparable<ObjectPermi
 			return false;
 		return true;
 	}
-	@Override
-	public Object getProperty() {
-		// TODO Auto-generated method stub
-		return this;
-	}
+	
 	
 
 }

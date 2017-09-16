@@ -1,6 +1,5 @@
 package com.sss.engine.configuration;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -15,12 +14,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
-import org.springframework.data.mongodb.core.MongoTemplate;
 
-import com.mongodb.MongoClient;
 import com.sss.engine.core.tags.ProfileField;
-
-import cz.jirutka.spring.embedmongo.EmbeddedMongoFactoryBean;
 
 @Component
 public class ReportEngineConfiguration {
@@ -71,14 +66,5 @@ public class ReportEngineConfiguration {
 		 xmlInputFactory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, false);
 		 return xmlInputFactory;
 	}
-	
-	@Bean
-    public MongoTemplate mongoTemplate() throws IOException {
-        EmbeddedMongoFactoryBean mongo = new EmbeddedMongoFactoryBean();
-        mongo.setBindIp(mongoDBUrl);
-        MongoClient mongoClient = mongo.getObject();
-        MongoTemplate mongoTemplate = new MongoTemplate(mongoClient, mongoDBName);
-        return mongoTemplate;
-    }
 	
 }

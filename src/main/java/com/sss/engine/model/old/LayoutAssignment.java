@@ -1,4 +1,4 @@
-package com.sss.engine.model;
+package com.sss.engine.model.old;
 
 import com.sss.engine.core.tags.ProfileField;
 
@@ -30,6 +30,29 @@ public class LayoutAssignment implements Comparable<LayoutAssignment> {
 		this.recordType = recordType;
 	}
 
-	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((layout == null) ? 0 : layout.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		LayoutAssignment other = (LayoutAssignment) obj;
+		if (layout == null) {
+			if (other.layout != null)
+				return false;
+		} else if (!layout.equals(other.layout))
+			return false;
+		return true;
+	}
 
 }

@@ -1,12 +1,16 @@
-package com.sss.engine.model;
+package com.sss.engine.model.old;
 
-public class TabVisibility implements ProfileProperty, Comparable<TabVisibility>{
+import com.sss.engine.core.tags.ProfileField;
+
+@ProfileField(name = "tabvisibilities")
+public class TabVisibility implements Comparable<TabVisibility>{
 
 	@Override
 	public int compareTo(TabVisibility o) {
 		// TODO Auto-generated method stub
 		return this.tab.compareTo(o.getTab());
 	}
+	
 	private String tab;
 	private String visibility;
 	public String getTab() {
@@ -24,7 +28,7 @@ public class TabVisibility implements ProfileProperty, Comparable<TabVisibility>
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = super.hashCode();
+		int result = 1;
 		result = prime * result + ((tab == null) ? 0 : tab.hashCode());
 		return result;
 	}
@@ -32,7 +36,7 @@ public class TabVisibility implements ProfileProperty, Comparable<TabVisibility>
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (!super.equals(obj))
+		if (obj == null)
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
@@ -44,11 +48,5 @@ public class TabVisibility implements ProfileProperty, Comparable<TabVisibility>
 			return false;
 		return true;
 	}
-	@Override
-	public Object getProperty() {
-		// TODO Auto-generated method stub
-		return this;
-	}
-	
 	
 }

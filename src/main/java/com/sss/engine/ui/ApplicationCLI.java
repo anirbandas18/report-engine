@@ -3,7 +3,9 @@ package com.sss.engine.ui;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
+import java.util.TreeSet;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +27,7 @@ import com.sss.engine.service.FileSystemService;
 
 @Configuration
 public class ApplicationCLI implements ApplicationRunner, ExitCodeGenerator {
-	
+
 	@Autowired
 	private ApplicationService service;
 	@Autowired
@@ -41,33 +43,47 @@ public class ApplicationCLI implements ApplicationRunner, ExitCodeGenerator {
 	@Value("2")
 	private Integer errorCode;
 	private BindingResult errors;
-	
+
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
 		// TODO Auto-generated method stub
-		if(args.containsOption(options.getHelp())) {
+		if (args.containsOption(options.getHelp())) {
 			System.out.println(options.getApplicationHelpMessage());
 		} else {
 			errors = new DirectFieldBindingResult(args, "application CLI options");
 			validator.validate(args, errors);
-			if(errors.hasErrors()) {
+			if (errors.hasErrors()) {
 				List<ObjectError> globalErrors = errors.getGlobalErrors();
-				String message = globalErrors.stream().map(ObjectError::getDefaultMessage).collect(Collectors.joining(","));
+				String message = globalErrors.stream().map(ObjectError::getDefaultMessage)
+						.collect(Collectors.joining(","));
 				System.out.println(message);
 			} else {
 				ReportMetadata reportMetadata = converter.convert(args);
 				System.out.println(reportMetadata);
 				List<String> fileLocations = fileSys.readFilesFromDirectory(reportMetadata.getInputLocation());
-				List<CompletableFuture<Set<String>>> parseJobs = new ArrayList<>();
-				for(String fl : fileLocations) {
-					// exeute thread per xml file for parsing
-					CompletableFuture<Set<String>> job = service.parseXML(fl, reportMetadata.getPropertyFilters());
-					parseJobs.add(job);
-				}
-				CompletableFuture<Void> allJobs = CompletableFuture.allOf(parseJobs.toArray(new CompletableFuture[parseJobs.size()]));
-				allJobs.join();
+				Set<String> modelProperties = parseAndLoadDataSet(fileLocations, reportMetadata.getPropertyFilters());
 			}
 		}
+	}
+
+	private Set<String> parseAndLoadDataSet(List<String> fileLocations, Set<String> filters) throws Exception {
+		List<Future<Set<String>>> parseJobs = new ArrayList<>();
+		Set<String> modelProperties = new TreeSet<>();
+		for (String fl : fileLocations) {
+			// exeute thread per xml file for parsing
+			Future<Set<String>> job = service.parseXML(fl, filters);
+			parseJobs.add(job);
+		}
+		parseJobs.forEach(job -> {
+			try {
+				Set<String> result = job.get();
+				modelProperties.addAll(result);
+			} catch (InterruptedException | ExecutionException e) {
+				// TODO Auto-generated catch block
+				throw new RuntimeException(e);
+			}
+		});
+		return modelProperties;
 	}
 
 	@Override

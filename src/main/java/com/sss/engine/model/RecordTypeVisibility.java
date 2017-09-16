@@ -1,5 +1,9 @@
 package com.sss.engine.model;
 
+import com.sss.engine.core.tags.ProfilePropertyAlias;
+import com.sss.engine.core.tags.ProfilePropertyType;
+
+@ProfilePropertyAlias(name = ProfilePropertyType.RECORD_TYPE_VISIBILITY)
 public class RecordTypeVisibility implements ProfileProperty, Comparable<RecordTypeVisibility>{
 
 	@Override
@@ -57,6 +61,5 @@ public class RecordTypeVisibility implements ProfileProperty, Comparable<RecordT
 		// TODO Auto-generated method stub
 		return this;
 	}
-
 	
 }

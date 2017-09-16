@@ -1,8 +1,9 @@
 package com.sss.engine.model;
 
-import com.sss.engine.core.tags.ProfileField;
+import com.sss.engine.core.tags.ProfilePropertyAlias;
+import com.sss.engine.core.tags.ProfilePropertyType;
 
-@ProfileField(name = "layoutassignments")
+@ProfilePropertyAlias(name = ProfilePropertyType.LAYOUT_ASSIGNMENT)
 public class LayoutAssignment implements Comparable<LayoutAssignment> {
 	
 	private String layout;

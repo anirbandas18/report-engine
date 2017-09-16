@@ -1,5 +1,9 @@
 package com.sss.engine.model;
 
+import com.sss.engine.core.tags.ProfilePropertyAlias;
+import com.sss.engine.core.tags.ProfilePropertyType;
+
+@ProfilePropertyAlias(name = ProfilePropertyType.USER_PERMISSION)
 public class UserPermission implements ProfileProperty, Comparable<UserPermission>{
 
 	@Override

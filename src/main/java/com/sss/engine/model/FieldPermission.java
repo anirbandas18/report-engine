@@ -1,6 +1,9 @@
 package com.sss.engine.model;
 
+import com.sss.engine.core.tags.ProfilePropertyAlias;
+import com.sss.engine.core.tags.ProfilePropertyType;
 
+@ProfilePropertyAlias(name = ProfilePropertyType.FIELD_PERMISSION)
 public class FieldPermission implements ProfileProperty, Comparable<FieldPermission>{
 
 	private Boolean editable;

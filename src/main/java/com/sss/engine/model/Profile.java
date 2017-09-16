@@ -3,11 +3,14 @@ package com.sss.engine.model;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
+import com.sss.engine.core.tags.Key;
 import com.sss.engine.core.tags.ProfilePropertyType;
 
 public class Profile {
 
+	@Key
 	private String name;
 	private Map<ProfilePropertyType,List<ProfileProperty>> properties;
 	public Map<ProfilePropertyType, List<ProfileProperty>> getProperties() {
@@ -48,22 +51,27 @@ public class Profile {
 	public Profile(String name) {
 		super();
 		this.name = name;
+		this.properties = new TreeMap<>();
 	}
 	public Profile() {
 		super();
 		// TODO Auto-generated constructor stub
+		this.properties = new TreeMap<>();
 	}
 	@Override
 	public String toString() {
-		String json = "{name : " + name + ", properties : [%s]" ;
+		String json = "{name : " + name + ", properties : [" ;
 		String propertyStats = "";
 		for(ProfilePropertyType key : properties.keySet()) {
 			List<ProfileProperty> value = properties.get(key);
-			propertyStats = propertyStats + "{" + key.name() + " : " +  value.size() + "}, ";
+			propertyStats = propertyStats + "{" + key.getValue() + " : " +  value.size() + "}, ";
 		}
-		propertyStats = propertyStats.trim();
-		propertyStats = propertyStats.substring(0, propertyStats.lastIndexOf(','));
-		return String.format(json, propertyStats);
+		if(!properties.isEmpty()) {
+			propertyStats = propertyStats.trim();
+			propertyStats = propertyStats.substring(0, propertyStats.lastIndexOf(','));
+		}
+		json = json.concat(propertyStats).concat("]}");
+		return json;
 	}
 	
 	public void addProperty(ProfilePropertyType key, ProfileProperty item) {
@@ -72,6 +80,7 @@ public class Profile {
 			value = new LinkedList<>();
 		}
 		value.add(item);
+		this.properties.put(key, value);
 	}
 	
 	public void addProperties(ProfilePropertyType key, List<ProfileProperty> item) {
@@ -80,5 +89,6 @@ public class Profile {
 			value = new LinkedList<>();
 		}
 		value.addAll(item);
+		this.properties.put(key, value);
 	}
 }

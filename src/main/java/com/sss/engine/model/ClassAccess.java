@@ -1,6 +1,9 @@
 package com.sss.engine.model;
 
+import com.sss.engine.core.tags.ProfilePropertyAlias;
+import com.sss.engine.core.tags.ProfilePropertyType;
 
+@ProfilePropertyAlias(name = ProfilePropertyType.CLASS_ACCESS)
 public class ClassAccess  implements ProfileProperty, Comparable<ClassAccess> {
 	private String apexClass;
 	private Boolean enabled;

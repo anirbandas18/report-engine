@@ -1,5 +1,9 @@
 package com.sss.engine.model;
 
+import com.sss.engine.core.tags.ProfilePropertyAlias;
+import com.sss.engine.core.tags.ProfilePropertyType;
+
+@ProfilePropertyAlias(name = ProfilePropertyType.PAGE_ACCESS)
 public class PageAccess implements ProfileProperty,Comparable<PageAccess>{
 
 	@Override
@@ -49,7 +53,5 @@ public class PageAccess implements ProfileProperty,Comparable<PageAccess>{
 		// TODO Auto-generated method stub
 		return this;
 	}
-	
-	
 	
 }

@@ -8,8 +8,8 @@ import java.lang.annotation.Target;
 
 @Retention(RUNTIME)
 @Target(TYPE)
-public @interface ProfileField {
+public @interface ProfilePropertyAlias {
 	
-	String name() default "";
+	public ProfilePropertyType name();
 
 }

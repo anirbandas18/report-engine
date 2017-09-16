@@ -1,5 +1,9 @@
 package com.sss.engine.model;
 
+import com.sss.engine.core.tags.ProfilePropertyAlias;
+import com.sss.engine.core.tags.ProfilePropertyType;
+
+@ProfilePropertyAlias(name = ProfilePropertyType.TAB_VISIBILITY)
 public class TabVisibility implements ProfileProperty, Comparable<TabVisibility>{
 
 	@Override
@@ -49,6 +53,5 @@ public class TabVisibility implements ProfileProperty, Comparable<TabVisibility>
 		// TODO Auto-generated method stub
 		return this;
 	}
-	
 	
 }

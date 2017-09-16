@@ -1,6 +1,9 @@
 package com.sss.engine.model;
 
+import com.sss.engine.core.tags.ProfilePropertyAlias;
+import com.sss.engine.core.tags.ProfilePropertyType;
 
+@ProfilePropertyAlias(name = ProfilePropertyType.OBJECT_PERMISSION)
 public class ObjectPermission implements ProfileProperty, Comparable<ObjectPermission>{
 
 	@Override
@@ -89,5 +92,4 @@ public class ObjectPermission implements ProfileProperty, Comparable<ObjectPermi
 		return this;
 	}
 	
-
 }

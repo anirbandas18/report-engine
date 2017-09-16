@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 import javax.xml.stream.XMLInputFactory;
 
@@ -15,7 +17,9 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
-import com.sss.engine.core.tags.ProfileField;
+import com.sss.engine.core.tags.ProfilePropertyAlias;
+import com.sss.engine.model.Profile;
+import com.sss.engine.model.ProfileProperty;
 
 @Component
 public class ReportEngineConfiguration {
@@ -24,10 +28,6 @@ public class ReportEngineConfiguration {
 	private String parentClassName;
 	@Value("${application.model.package}")
 	private String applicationModelPackage;
-	@Value("${application.mongo.db.url}")
-	private String mongoDBUrl;
-	@Value("${application.mongo.db.name}")
-	private String mongoDBName;
 	
 	private Comparator<Class<?>> classComparator = new Comparator<Class<?>>() {
 		
@@ -39,14 +39,19 @@ public class ReportEngineConfiguration {
 	};
 	
 	@Bean
-	public List<Class<?>> applicationModelClasses() {
+	public List<Class<? extends ProfileProperty>> applicationModelClasses() {
 		Reflections applicationModel = new Reflections(applicationModelPackage);
-		Set<Class<?>> applicationModelClassSet = applicationModel.getTypesAnnotatedWith(ProfileField.class);
-		List<Class<?>> applicationModelClassList = new ArrayList<>(applicationModelClassSet);
+		Set<Class<? extends ProfileProperty>> applicationModelClassSet = applicationModel.getSubTypesOf(ProfileProperty.class);
+		List<Class<? extends ProfileProperty>> applicationModelClassList = new ArrayList<>(applicationModelClassSet);
 		Collections.sort(applicationModelClassList, classComparator );
 		return applicationModelClassList;
 	}
 
+	@Bean
+	public Map<String,Profile> profileCache() {
+		return new ConcurrentSkipListMap<>();
+	}
+	
 	@Bean
     public TaskExecutor xmlParsingThreadPool() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();

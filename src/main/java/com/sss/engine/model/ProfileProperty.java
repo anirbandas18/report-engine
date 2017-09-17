@@ -46,7 +46,7 @@ public interface ProfileProperty extends Serializable {
 		return value;
 	}
 
-	default Map<String,String> formatSerilizableFieldKeys() {
+	default Map<String,String> formatSerilizableFields() {
 		Map<String,String> serializableFields = new LinkedHashMap<>();
 		Class<? extends ProfileProperty> clazz = getProperty().getClass();
 		for (Field f : clazz.getDeclaredFields()) {
@@ -99,26 +99,6 @@ public interface ProfileProperty extends Serializable {
 			}
 		}
 		return serializableFields;
-	}
-
-	default String formatSerilizableFieldValues() {
-		String formattedFieldValues = "";
-		Class<? extends ProfileProperty> clazz = getProperty().getClass();
-		for (Field f : clazz.getDeclaredFields()) {
-			if (f.isAnnotationPresent(ProfilePropertySerializableField.class)) {
-				try {
-					if(f.getType() == Boolean.class) {
-						
-					} else {
-						
-					}
-					f.get(getProperty());
-				} catch (IllegalArgumentException | IllegalAccessException e) {
-					throw new RuntimeException(e);
-				}
-			}
-		}
-		return formattedFieldValues;
 	}
 
 	public ProfileProperty getProperty();

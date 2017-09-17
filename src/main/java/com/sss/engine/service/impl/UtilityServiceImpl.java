@@ -9,8 +9,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -200,17 +200,23 @@ public class UtilityServiceImpl implements UtilityService {
 			Profile profile = repository.fetchProfile(profileName);
 			ProfilePropertyType key = getEnumForStringAlias(alias);
 			List<ProfileProperty> specificProperties = profile.getProperties(key);
-			Integer count = 0, n = 0;
+			Integer count = 0;
 			String line = profileName + csvDelimitter;
 			for(ProfileProperty parent : allProperties) {
+				Map<String,String> parentFields = parent.formatSerilizableFields();
 				if(count < specificProperties.size()) {
 					ProfileProperty child = specificProperties.get(count);
 					if(parent.equals(child)) {
-						
+						Map<String,String> childFields = child.formatSerilizableFields();
+						String formattedValues = formatDataCollection(childFields.values());
+						line = line + formattedValues;
 						count++;
 					} else {
-						line = line + String.join("", Collections.nCopies(n, "-")) + csvDelimitter;
+						line = line + String.join("", Collections.nCopies(parentFields.size(), "-/"));
 					}
+					line = line + csvDelimitter;
+				} else {
+					line = line + String.join("", Collections.nCopies(parentFields.size(), "-/")) + csvDelimitter;
 				}
 			}
 			bw.write(line);
@@ -232,16 +238,21 @@ public class UtilityServiceImpl implements UtilityService {
 	private String createHeader(List<ProfileProperty> profileProperties) {
 		String header = csvReportHeaderPrefix + csvDelimitter;
 		for(ProfileProperty property : profileProperties) {
-			Map<String,String> serializableFields = property.formatSerilizableFieldKeys();
-			String formattedKeys = serializableFields.keySet().toString();
-			formattedKeys = formattedKeys.replaceAll(",\\s", "/");
-			formattedKeys = formattedKeys.substring(1, formattedKeys.length() - 1);
+			Map<String,String> serializableFields = property.formatSerilizableFields();
 			String key = property.getProfilePropertyKey();
+			String formattedKeys = formatDataCollection(serializableFields.keySet());
 			String columnName = key + " : " + formattedKeys;
 			header = header + columnName + csvDelimitter;
 		}
 		header = header.substring(0, header.lastIndexOf(','));
 		return header;
+	}
+	
+	private String formatDataCollection(Collection<String> data) {
+		String formatted = data.toString();
+		formatted = formatted.replaceAll(",\\s", "/");
+		formatted = formatted.substring(1, formatted.length() - 1);
+		return formatted;
 	}
 	
 	@Override

@@ -54,13 +54,19 @@ public class ApplicationCLI implements ApplicationRunner, ExitCodeGenerator {
 			} else {
 				ReportMetadata reportMetadata = converter.convert(args);
 				System.out.println(reportMetadata);
+				Long start = System.currentTimeMillis();
 				Set<String> modelPropertiyAliases = worker.parseAndLoadDataSet(reportMetadata);
+				Long end = System.currentTimeMillis();
+				System.out.println("{processingType : xmlParsing, timeTakenInMs : " + (end - start) + "}");
 				if(reportMetadata.getPropertyFilters().isEmpty()) {
 					reportMetadata.setPropertyFilters(modelPropertiyAliases);
 				}
 				System.out.println("{distinctPropertyAliases : " + modelPropertiyAliases + "}");
+				start = System.currentTimeMillis();
 				Integer noOfReports = worker.processAndDumpDataSet(reportMetadata);
+				end = System.currentTimeMillis();
 				System.out.println("{dumpLocation : " + reportMetadata.getOutputLocation() + ", noOfReports : " + noOfReports + "}");
+				System.out.println("{processingType : csvGeneration, timeTakenInMs : " + (end - start) + "}");
 			}
 		}
 	}

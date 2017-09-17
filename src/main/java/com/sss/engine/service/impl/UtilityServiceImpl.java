@@ -171,9 +171,10 @@ public class UtilityServiceImpl implements UtilityService {
 	}
 
 	@Override
-	public void generateCSV(Set<String> modelPropertyAliases) throws QueryParseException {
+	public Future<String> generateCSV(String modelPropertyAlias) throws QueryParseException {
 		// TODO Auto-generated method stub
 		
+		return new AsyncResult<String>("");
 	}
 
 	@Override

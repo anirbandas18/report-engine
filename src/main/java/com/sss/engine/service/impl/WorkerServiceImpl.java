@@ -11,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.sss.engine.dto.ReportMetadata;
-import com.sss.engine.model.ProfileProperty;
-import com.sss.engine.repository.ProfileRepository;
 import com.sss.engine.service.FileSystemService;
 import com.sss.engine.service.UtilityService;
 import com.sss.engine.service.WorkerService;
@@ -22,8 +20,6 @@ public class WorkerServiceImpl implements WorkerService {
 	
 	@Autowired
 	private UtilityService util;
-	@Autowired
-	private ProfileRepository repository;
 	@Autowired
 	private FileSystemService fileSys;
 	
@@ -52,12 +48,27 @@ public class WorkerServiceImpl implements WorkerService {
 	}
 
 	@Override
-	public void processAndDumpDataSet(Set<String> distinctProcessedModelPropertyAliases) {
+	public List<String> processAndDumpDataSet(ReportMetadata metadata) throws Exception {
 		// TODO Auto-generated method stub
-		for(String alias : distinctProcessedModelPropertyAliases) {
-			List<ProfileProperty> distinctModelProperties = repository.fetchAllDistinctProfilePropertiesOfType(alias);
-			System.out.println(alias + " : " + distinctModelProperties);
+		Set<String> filteredAliases = metadata.getPropertyFilters();
+		List<Future<String>> generationJobs = new ArrayList<>();
+		List<String> reportPaths = new ArrayList<>();
+		for(String alias : filteredAliases) {
+			/*List<ProfileProperty> distinctModelProperties = repository.fetchAllDistinctProfilePropertiesOfType(alias);
+			System.out.println(alias + " : " + distinctModelProperties);*/
+			Future<String> job = util.generateCSV(alias);
+			generationJobs.add(job);
 		}
+		generationJobs.forEach(job -> {
+			try {
+				String path = job.get();
+				reportPaths.add(path);
+			} catch (InterruptedException | ExecutionException e) {
+				// TODO Auto-generated catch block
+				throw new RuntimeException(e);
+			}
+		});
+		return reportPaths;
 	}
 
 }

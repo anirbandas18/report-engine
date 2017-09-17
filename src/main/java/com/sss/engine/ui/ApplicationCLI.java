@@ -55,8 +55,14 @@ public class ApplicationCLI implements ApplicationRunner, ExitCodeGenerator {
 				ReportMetadata reportMetadata = converter.convert(args);
 				System.out.println(reportMetadata);
 				Set<String> modelPropertiyAliases = worker.parseAndLoadDataSet(reportMetadata);
+				if(reportMetadata.getPropertyFilters().isEmpty()) {
+					reportMetadata.setPropertyFilters(modelPropertiyAliases);
+				}
 				System.out.println("Processed distinct model property aliases: " + modelPropertiyAliases);
-				worker.processAndDumpDataSet(modelPropertiyAliases);
+				List<String> reportLocations = worker.processAndDumpDataSet(reportMetadata);
+				for(String loc : reportLocations) {
+					System.out.println(loc);
+				}
 			}
 		}
 	}

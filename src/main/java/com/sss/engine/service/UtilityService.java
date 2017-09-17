@@ -19,7 +19,8 @@ public interface UtilityService {
 	@Async
 	public Future<Set<String>> parseXML(String xmlFileLocation, Set<String> filters) throws Exception;
 	
-	public void generateCSV(Set<String> modelPropertyAliases) throws QueryParseException;
+	@Async
+	public Future<String> generateCSV(String modelPropertyAlias) throws QueryParseException;
 	
 	public ProfilePropertyType getEnumForStringAlias(final String alias);
 

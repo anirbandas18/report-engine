@@ -91,5 +91,9 @@ public class ObjectPermission implements ProfileProperty, Comparable<ObjectPermi
 		// TODO Auto-generated method stub
 		return this;
 	}
+	@Override
+	public String toString() {
+		return "{object=" + object + "}";
+	}
 	
 }

@@ -1,11 +1,7 @@
 package com.sss.engine.ui;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,22 +18,20 @@ import com.sss.engine.core.ApplicationArgsToMetadataConverter;
 import com.sss.engine.core.ApplicationArgsValidator;
 import com.sss.engine.dto.ApplicationCLIOptions;
 import com.sss.engine.dto.ReportMetadata;
-import com.sss.engine.service.ApplicationService;
-import com.sss.engine.service.FileSystemService;
+import com.sss.engine.service.WorkerService;
 
 @Configuration
 public class ApplicationCLI implements ApplicationRunner, ExitCodeGenerator {
 
 	@Autowired
-	private ApplicationService service;
+	private WorkerService worker;
 	@Autowired
 	private ApplicationArgsValidator validator;
 	@Autowired
 	private ApplicationArgsToMetadataConverter converter;
 	@Autowired
 	private ApplicationCLIOptions options;
-	@Autowired
-	private FileSystemService fileSys;
+	
 	@Value("0")
 	private Integer successCode;
 	@Value("2")
@@ -60,31 +54,11 @@ public class ApplicationCLI implements ApplicationRunner, ExitCodeGenerator {
 			} else {
 				ReportMetadata reportMetadata = converter.convert(args);
 				System.out.println(reportMetadata);
-				List<String> fileLocations = fileSys.readFilesFromDirectory(reportMetadata.getInputLocation());
-				Set<String> modelProperties = parseAndLoadDataSet(fileLocations, reportMetadata.getPropertyFilters());
-				System.out.println(modelProperties);
+				Set<String> modelPropertiyAliases = worker.parseAndLoadDataSet(reportMetadata);
+				System.out.println("Processed distinct model property aliases: " + modelPropertiyAliases);
+				worker.processAndDumpDataSet(modelPropertiyAliases);
 			}
 		}
-	}
-
-	private Set<String> parseAndLoadDataSet(List<String> fileLocations, Set<String> filters) throws Exception {
-		List<Future<Set<String>>> parseJobs = new ArrayList<>();
-		Set<String> modelProperties = new TreeSet<>();
-		for (String fl : fileLocations) {
-			// exeute thread per xml file for parsing
-			Future<Set<String>> job = service.parseXML(fl, filters);
-			parseJobs.add(job);
-		}
-		parseJobs.forEach(job -> {
-			try {
-				Set<String> result = job.get();
-				modelProperties.addAll(result);
-			} catch (InterruptedException | ExecutionException e) {
-				// TODO Auto-generated catch block
-				throw new RuntimeException(e);
-			}
-		});
-		return modelProperties;
 	}
 
 	@Override

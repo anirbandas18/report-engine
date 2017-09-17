@@ -15,25 +15,25 @@ import javax.annotation.Resource;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
+import org.josql.QueryParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Component;
 
-import com.sss.engine.core.cache.ProfileCacheManager;
 import com.sss.engine.core.tags.ProfilePropertyAlias;
 import com.sss.engine.core.tags.ProfilePropertyType;
 import com.sss.engine.model.Profile;
 import com.sss.engine.model.ProfileProperty;
-import com.sss.engine.service.ApplicationService;
+import com.sss.engine.repository.ProfileRepository;
 import com.sss.engine.service.FileSystemService;
+import com.sss.engine.service.UtilityService;
 
 @Component
-public class ApplicationServiceImpl implements ApplicationService {
+public class UtilityServiceImpl implements UtilityService {
 	
 	@Autowired
-	private ProfileCacheManager cache;
+	private ProfileRepository cache;
 	@Autowired
 	private XMLInputFactory xmlInputFactory;
 	@Autowired
@@ -45,8 +45,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 	
 	@Value("#{'${application.model.skip.properties}'.split(',')}")
 	private List<String> skipppedEntities;
-
-
+	@Value("${query1}")
+	private String josqlQuery1;
+	
 	@Override
 	public Class<? extends ProfileProperty> searchClassByTag(List<Class<? extends ProfileProperty>> list, String tagName) {
 		// TODO Auto-generated method stub
@@ -90,7 +91,6 @@ public class ApplicationServiceImpl implements ApplicationService {
 	}
 
 	@SuppressWarnings("unused")
-	@Async("xmlParsingThreadPool")
 	public Future<Set<String>> parseXML(String fileLocation, Set<String> filters) throws Exception  {
 		String tagName = "";
 		String tagContent = "";
@@ -140,18 +140,13 @@ public class ApplicationServiceImpl implements ApplicationService {
 				tagClass = validateTag(filters, tagName);
 				if(tagClass != null && tagClass.equals(parentModelClass)) {
 					// save parentModel to cache
+					String processor = Thread.currentThread().getName();
 					Profile profile = (Profile) parentModel;
 					Boolean status = cache.storeProfile(profile.getName(), profile);
-					System.out.println(profile.getName() + " cache status: " + status);
+					System.out.println("{name : " + profile.getName() + ", cacheStatus : " + status + ", processor : " + processor + "}");
 				} else if(tagClass != null) {
-					//final String modelPropertyClassName = currentModelPropertyClass.getSimpleName().toLowerCase();
 					Method addProperty = parentModelClass.getDeclaredMethod("addProperty", ProfilePropertyType.class, ProfileProperty.class);
-					/*if(m != null) {
-						m.invoke(parentModel, currentModelProperty);
-					}*/
-					final String propertyName = tagName.toLowerCase();
-					List<ProfilePropertyType> profilePropertyTypes = new ArrayList<>(Arrays.asList(ProfilePropertyType.values()));
-					ProfilePropertyType key = profilePropertyTypes.stream().filter(ppty -> ppty.getValue().equalsIgnoreCase(propertyName)).findAny().orElse(null);
+					ProfilePropertyType key = getEnumForStringAlias(tagName.toLowerCase());
 					addProperty.invoke(parentModel, key, (ProfileProperty) currentModelProperty);
 				} else {
 					currentTagBelongsToModel = false;
@@ -173,6 +168,20 @@ public class ApplicationServiceImpl implements ApplicationService {
 			xmlReader.next();
 		}
 		return new AsyncResult<Set<String>>(modelProperties);
+	}
+
+	@Override
+	public void generateCSV(Set<String> modelPropertyAliases) throws QueryParseException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public ProfilePropertyType getEnumForStringAlias(final String alias) {
+		// TODO Auto-generated method stub
+		List<ProfilePropertyType> profilePropertyTypes = new ArrayList<>(Arrays.asList(ProfilePropertyType.values()));
+		ProfilePropertyType key = profilePropertyTypes.stream().filter(ppty -> ppty.getValue().equalsIgnoreCase(alias)).findAny().orElse(null);
+		return key;
 	}
 
 }

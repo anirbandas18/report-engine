@@ -1,26 +1,32 @@
-package com.sss.engine.core.cache.impl;
+package com.sss.engine.repository.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.josql.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.sss.engine.core.cache.ProfileCacheManager;
 import com.sss.engine.core.tags.ProfilePropertyType;
 import com.sss.engine.model.Profile;
+import com.sss.engine.model.ProfileProperty;
+import com.sss.engine.repository.ProfileRepository;
+import com.sss.engine.service.UtilityService;
 
 @Component
-public class ProfileCacheManagerImpl implements ProfileCacheManager {
+public class ProfileRepositoryImpl implements ProfileRepository {
 	
 	@Autowired
 	private Map<String,Profile> profileCache;
 	@Autowired
 	private Query query;
+	@Autowired
+	private UtilityService service;
 
 	@Override
 	public Boolean storeProfile(String name, Profile profile) {
@@ -59,15 +65,24 @@ public class ProfileCacheManagerImpl implements ProfileCacheManager {
 	}
 
 	@Override
-	public List<String> fetchAllDistinctProfilePropertiesOfType(ProfilePropertyType type) {
+	public List<ProfileProperty> fetchAllDistinctProfilePropertiesOfType(ProfilePropertyType type) {
 		// TODO Auto-generated method stub
-		return null;
+		Collection<Profile> profileList = profileCache.values();
+		Set<ProfileProperty> properties = new TreeSet<>();
+		for(Profile profile : profileList) {
+			List<ProfileProperty> value = profile.getProperties(type);
+			properties.addAll(value);
+		}
+		List<ProfileProperty> distinctProperties = new ArrayList<ProfileProperty>(properties); 
+		return distinctProperties;
 	}
 
 	@Override
-	public List<String> fetchAllDistinctProfilePropertiesOfType(String alias) {
+	public List<ProfileProperty> fetchAllDistinctProfilePropertiesOfType(String alias) {
 		// TODO Auto-generated method stub
-		return null;
+		ProfilePropertyType  type = service.getEnumForStringAlias(alias);
+		List<ProfileProperty> distinctProperties = fetchAllDistinctProfilePropertiesOfType(type);
+		return distinctProperties;
 	}
 
 }

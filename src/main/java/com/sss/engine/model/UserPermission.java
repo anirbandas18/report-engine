@@ -53,5 +53,9 @@ public class UserPermission implements ProfileProperty, Comparable<UserPermissio
 		// TODO Auto-generated method stub
 		return this;
 	}
+	@Override
+	public String toString() {
+		return "{name=" + name + "}";
+	}
 	
 }

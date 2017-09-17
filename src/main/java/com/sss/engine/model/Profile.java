@@ -91,4 +91,12 @@ public class Profile {
 		value.addAll(item);
 		this.properties.put(key, value);
 	}
+	
+	public List<ProfileProperty> getProperties(ProfilePropertyType key) {
+		List<ProfileProperty> value = this.properties.get(key);
+		if(value == null) {
+			value = new LinkedList<>();
+		}
+		return value;
+	}
 }

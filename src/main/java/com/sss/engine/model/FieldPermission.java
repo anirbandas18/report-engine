@@ -61,5 +61,9 @@ public class FieldPermission implements ProfileProperty, Comparable<FieldPermiss
 		// TODO Auto-generated method stub
 		return this;
 	}
+	@Override
+	public String toString() {
+		return "{field=" + field + "}";
+	}
 	
 }

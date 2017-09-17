@@ -60,5 +60,11 @@ public class ClassAccess  implements ProfileProperty, Comparable<ClassAccess> {
 		// TODO Auto-generated method stub
 		return this;
 	}
+
+	@Override
+	public String toString() {
+		return "{apexClass=" + apexClass + "}";
+	}
+	
 	
 }

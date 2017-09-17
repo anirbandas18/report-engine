@@ -61,5 +61,9 @@ public class RecordTypeVisibility implements ProfileProperty, Comparable<RecordT
 		// TODO Auto-generated method stub
 		return this;
 	}
+	@Override
+	public String toString() {
+		return "{recordType=" + recordType + "}";
+	}
 	
 }

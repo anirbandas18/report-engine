@@ -53,9 +53,9 @@ public class ReportEngineConfiguration {
 	}
 	
 	@Bean
-    public TaskExecutor xmlParsingThreadPool() {
+    public TaskExecutor applicationThreadPool() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setThreadNamePrefix("xmlParser-");
+        executor.setThreadNamePrefix("applicationThreadPool-");
         executor.initialize();
         return executor;
     }

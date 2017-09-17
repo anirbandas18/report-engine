@@ -53,5 +53,9 @@ public class TabVisibility implements ProfileProperty, Comparable<TabVisibility>
 		// TODO Auto-generated method stub
 		return this;
 	}
+	@Override
+	public String toString() {
+		return "{tab=" + tab + "}";
+	}
 	
 }

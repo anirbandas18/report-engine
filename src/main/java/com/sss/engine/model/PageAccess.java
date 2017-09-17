@@ -53,5 +53,9 @@ public class PageAccess implements ProfileProperty,Comparable<PageAccess>{
 		// TODO Auto-generated method stub
 		return this;
 	}
+	@Override
+	public String toString() {
+		return "{apexPage=" + apexPage + "}";
+	}
 	
 }

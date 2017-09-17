@@ -62,6 +62,7 @@ public class ApplicationCLI implements ApplicationRunner, ExitCodeGenerator {
 				System.out.println(reportMetadata);
 				List<String> fileLocations = fileSys.readFilesFromDirectory(reportMetadata.getInputLocation());
 				Set<String> modelProperties = parseAndLoadDataSet(fileLocations, reportMetadata.getPropertyFilters());
+				System.out.println(modelProperties);
 			}
 		}
 	}

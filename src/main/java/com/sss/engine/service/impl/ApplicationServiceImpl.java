@@ -142,7 +142,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 					// save parentModel to cache
 					Profile profile = (Profile) parentModel;
 					Boolean status = cache.storeProfile(profile.getName(), profile);
-					System.out.println(status + " " + profile);
+					System.out.println(profile.getName() + " cache status: " + status);
 				} else if(tagClass != null) {
 					//final String modelPropertyClassName = currentModelPropertyClass.getSimpleName().toLowerCase();
 					Method addProperty = parentModelClass.getDeclaredMethod("addProperty", ProfilePropertyType.class, ProfileProperty.class);

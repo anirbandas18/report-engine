@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentSkipListMap;
 
 import javax.xml.stream.XMLInputFactory;
 
+import org.josql.Query;
 import org.reflections.Reflections;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -17,7 +18,6 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
-import com.sss.engine.core.tags.ProfilePropertyAlias;
 import com.sss.engine.model.Profile;
 import com.sss.engine.model.ProfileProperty;
 
@@ -70,6 +70,11 @@ public class ReportEngineConfiguration {
 		 XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
 		 xmlInputFactory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, false);
 		 return xmlInputFactory;
+	}
+	
+	@Bean
+	public Query query() {
+		return  new Query();
 	}
 	
 }

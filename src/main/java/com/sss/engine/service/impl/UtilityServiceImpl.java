@@ -203,7 +203,7 @@ public class UtilityServiceImpl implements UtilityService {
 			String line = profileName + csvDelimitter;
 			for(ProfileProperty parent : allProperties) {
 				Map<String,String> parentFields = parent.formatSerilizableFields();
-				String blankTemplate = parentFields.size() > 1 ? "-/" : "-";
+				String blankTemplate = parentFields.size() > 1 ? "-:" : "-";
 				String blankCell = String.join("", Collections.nCopies(parentFields.size(), blankTemplate));
 				if(count < specificProperties.size()) {
 					ProfileProperty child = specificProperties.get(count);
@@ -242,7 +242,7 @@ public class UtilityServiceImpl implements UtilityService {
 			Map<String,String> serializableFields = property.formatSerilizableFields();
 			String key = property.getProfilePropertyKey();
 			String formattedKeys = formatDataCollection(serializableFields.keySet());
-			String columnName = key + " : " + formattedKeys;
+			String columnName = key + " - " + formattedKeys;
 			header = header + columnName + csvDelimitter;
 		}
 		header = header.substring(0, header.lastIndexOf(','));
@@ -251,7 +251,7 @@ public class UtilityServiceImpl implements UtilityService {
 	
 	private String formatDataCollection(Collection<String> data) {
 		String formatted = data.toString();
-		formatted = formatted.replaceAll(",\\s", "/");
+		formatted = formatted.replaceAll(",\\s", ":");
 		formatted = formatted.substring(1, formatted.length() - 1);
 		return formatted;
 	}

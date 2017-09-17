@@ -57,6 +57,7 @@ public class ReportEngineConfiguration {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setThreadNamePrefix("applicationThreadPool-");
         executor.initialize();
+        executor.setCorePoolSize(Runtime.getRuntime().availableProcessors());
         return executor;
     }
 	

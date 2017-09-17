@@ -1,11 +1,15 @@
 package com.sss.engine.model;
 
 import com.sss.engine.core.tags.ProfilePropertyAlias;
+import com.sss.engine.core.tags.ProfilePropertyKey;
 import com.sss.engine.core.tags.ProfilePropertyType;
+import com.sss.engine.core.tags.ProfilePropertySerializableField;
 
 @ProfilePropertyAlias(name = ProfilePropertyType.CLASS_ACCESS)
 public class ClassAccess  implements ProfileProperty, Comparable<ClassAccess> {
+	@ProfilePropertyKey
 	private String apexClass;
+	@ProfilePropertySerializableField
 	private Boolean enabled;
 	
 	@Override
@@ -56,14 +60,9 @@ public class ClassAccess  implements ProfileProperty, Comparable<ClassAccess> {
 	}
 
 	@Override
-	public Object getProperty() {
+	public ProfileProperty getProperty() {
 		// TODO Auto-generated method stub
 		return this;
 	}
 
-	@Override
-	public String toString() {
-		return apexClass + " : E";
-	}
-	
 }

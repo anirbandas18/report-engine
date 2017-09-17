@@ -9,7 +9,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.Future;
@@ -122,7 +125,7 @@ public class UtilityServiceImpl implements UtilityService {
 				if(tagClass != null && tagClass.equals(parentModelClass)) {
 					String fileName = fileSys.getFileNameFromPath(fileLocation);
 					List<Field> fields = new ArrayList<>(Arrays.asList(parentModelClass.getDeclaredFields()));
-					Field f = fields.stream().filter(x -> x.isAnnotationPresent(com.sss.engine.core.tags.Key.class)).findAny().orElse(null);
+					Field f = fields.stream().filter(x -> x.isAnnotationPresent(com.sss.engine.core.tags.ProfilePropertyKey.class)).findAny().orElse(null);
 					parentModel = parentModelClass.newInstance();
 					if(f != null) {
 						f.setAccessible(true);
@@ -186,10 +189,34 @@ public class UtilityServiceImpl implements UtilityService {
 		String processorName = Thread.currentThread().getName();
 		StringWriter sw = new StringWriter();
 		BufferedWriter bw = new BufferedWriter(sw);
-		List<ProfileProperty> profileProperties = repository.fetchAllDistinctProfilePropertiesOfType(alias);
-		String header = createHeader(profileProperties);
+		List<ProfileProperty> allProperties = repository.fetchAllDistinctProfilePropertiesOfType(alias);
+		String header = createHeader(allProperties);
 		bw.write(header);
 		bw.newLine();
+		
+		// logic to write report body
+		
+		for(String profileName : repository.fetchAllProfileNames()) {
+			Profile profile = repository.fetchProfile(profileName);
+			ProfilePropertyType key = getEnumForStringAlias(alias);
+			List<ProfileProperty> specificProperties = profile.getProperties(key);
+			Integer count = 0, n = 0;
+			String line = profileName + csvDelimitter;
+			for(ProfileProperty parent : allProperties) {
+				if(count < specificProperties.size()) {
+					ProfileProperty child = specificProperties.get(count);
+					if(parent.equals(child)) {
+						
+						count++;
+					} else {
+						line = line + String.join("", Collections.nCopies(n, "-")) + csvDelimitter;
+					}
+				}
+			}
+			bw.write(line);
+			bw.newLine();
+		}
+		
 		bw.flush();
 		String report = sw.toString();
 		String name = fileNamePrefix + "_" + alias + csvFileExtension;
@@ -198,15 +225,22 @@ public class UtilityServiceImpl implements UtilityService {
 		fw.setName(name);
 		String reportLocation = fileSys.writeFileToDirectory(csvDumpLocation, fw);
 		String reportName = fileSys.getFileNameFromPath(reportLocation);
-		System.out.println("{reportName : " + reportName + ", reportProcessor : " + processorName + "}");
+		System.out.println("{reportName : " + reportName + ", reportSize : " + report.length() + ", reportProcessor : " + processorName + "}");
 		return new AsyncResult<String>(reportLocation);
 	}
 
 	private String createHeader(List<ProfileProperty> profileProperties) {
 		String header = csvReportHeaderPrefix + csvDelimitter;
-		String remainingHeader = profileProperties.toString();
-		remainingHeader = remainingHeader.substring(1, remainingHeader.length() - 1);
-		header = header + remainingHeader;
+		for(ProfileProperty property : profileProperties) {
+			Map<String,String> serializableFields = property.formatSerilizableFieldKeys();
+			String formattedKeys = serializableFields.keySet().toString();
+			formattedKeys = formattedKeys.replaceAll(",\\s", "/");
+			formattedKeys = formattedKeys.substring(1, formattedKeys.length() - 1);
+			String key = property.getProfilePropertyKey();
+			String columnName = key + " : " + formattedKeys;
+			header = header + columnName + csvDelimitter;
+		}
+		header = header.substring(0, header.lastIndexOf(','));
 		return header;
 	}
 	

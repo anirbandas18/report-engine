@@ -1,13 +1,18 @@
 package com.sss.engine.model;
 
 import com.sss.engine.core.tags.ProfilePropertyAlias;
+import com.sss.engine.core.tags.ProfilePropertyKey;
 import com.sss.engine.core.tags.ProfilePropertyType;
+import com.sss.engine.core.tags.ProfilePropertySerializableField;
 
 @ProfilePropertyAlias(name = ProfilePropertyType.FIELD_PERMISSION)
 public class FieldPermission implements ProfileProperty, Comparable<FieldPermission>{
 
+	@ProfilePropertySerializableField
 	private Boolean editable;
+	@ProfilePropertyKey
 	private String field;
+	@ProfilePropertySerializableField
 	private Boolean readable;
 	@Override
 	public int compareTo(FieldPermission o) {
@@ -57,13 +62,9 @@ public class FieldPermission implements ProfileProperty, Comparable<FieldPermiss
 		return true;
 	}
 	@Override
-	public Object getProperty() {
+	public ProfileProperty getProperty() {
 		// TODO Auto-generated method stub
 		return this;
-	}
-	@Override
-	public String toString() {
-		return field + " : ER";
 	}
 	
 }

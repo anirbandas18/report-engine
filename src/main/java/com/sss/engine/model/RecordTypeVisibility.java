@@ -1,7 +1,9 @@
 package com.sss.engine.model;
 
 import com.sss.engine.core.tags.ProfilePropertyAlias;
+import com.sss.engine.core.tags.ProfilePropertyKey;
 import com.sss.engine.core.tags.ProfilePropertyType;
+import com.sss.engine.core.tags.ProfilePropertySerializableField;
 
 @ProfilePropertyAlias(name = ProfilePropertyType.RECORD_TYPE_VISIBILITY)
 public class RecordTypeVisibility implements ProfileProperty, Comparable<RecordTypeVisibility>{
@@ -11,9 +13,11 @@ public class RecordTypeVisibility implements ProfileProperty, Comparable<RecordT
 		// TODO Auto-generated method stub
 		return this.recordType.compareTo(o.getRecordType());
 	}
-	
+	@ProfilePropertySerializableField
 	private Boolean default_;
+	@ProfilePropertySerializableField
 	private Boolean visible;
+	@ProfilePropertyKey
 	private String recordType;
 	public Boolean getDefault_() {
 		return default_;
@@ -57,13 +61,9 @@ public class RecordTypeVisibility implements ProfileProperty, Comparable<RecordT
 		return true;
 	}
 	@Override
-	public Object getProperty() {
+	public ProfileProperty getProperty() {
 		// TODO Auto-generated method stub
 		return this;
-	}
-	@Override
-	public String toString() {
-		return recordType + " : DV";
 	}
 	
 }

@@ -26,7 +26,7 @@ public class ApplicationArgsToMetadataConverter implements Converter<Application
 		// TODO Auto-generated method stub
 		String input = source.getOptionValues(options.getInput()).get(0);
 		String output = source.getOptionValues(options.getOutput()).get(0);
-		List<String> f = source.getOptionValues(options.getFilter());
+		List<String> f = source.getOptionValues(options.getFilters());
 		Set<String> filters = new LinkedHashSet<>();
 		if(f != null) {
 			for(String x : f) {

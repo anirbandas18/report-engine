@@ -5,12 +5,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import com.sss.engine.core.tags.Key;
+import com.sss.engine.core.tags.ProfilePropertyKey;
 import com.sss.engine.core.tags.ProfilePropertyType;
 
 public class Profile {
 
-	@Key
+	@ProfilePropertyKey
 	private String name;
 	private Map<ProfilePropertyType,List<ProfileProperty>> properties;
 	public Map<ProfilePropertyType, List<ProfileProperty>> getProperties() {

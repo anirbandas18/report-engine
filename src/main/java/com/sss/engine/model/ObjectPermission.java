@@ -1,7 +1,9 @@
 package com.sss.engine.model;
 
 import com.sss.engine.core.tags.ProfilePropertyAlias;
+import com.sss.engine.core.tags.ProfilePropertyKey;
 import com.sss.engine.core.tags.ProfilePropertyType;
+import com.sss.engine.core.tags.ProfilePropertySerializableField;
 
 @ProfilePropertyAlias(name = ProfilePropertyType.OBJECT_PERMISSION)
 public class ObjectPermission implements ProfileProperty, Comparable<ObjectPermission>{
@@ -11,13 +13,19 @@ public class ObjectPermission implements ProfileProperty, Comparable<ObjectPermi
 		// TODO Auto-generated method stub
 		return this.object.compareTo(o.getObject());
 	}
-	
+	@ProfilePropertySerializableField(name = "create")
 	private Boolean allowCreate;
+	@ProfilePropertySerializableField(name = "read")
 	private Boolean allowRead;
+	@ProfilePropertySerializableField(name = "edit")
 	private Boolean allowEdit;
+	@ProfilePropertySerializableField(name = "delete")
 	private Boolean allowDelete;
+	@ProfilePropertySerializableField(name = "modifyAll")
 	private Boolean modifyAllRecords;
+	@ProfilePropertySerializableField(name = "viewAll")
 	private Boolean viewAllRecords;
+	@ProfilePropertyKey
 	private String object;
 	public Boolean getAllowCreate() {
 		return allowCreate;
@@ -87,13 +95,9 @@ public class ObjectPermission implements ProfileProperty, Comparable<ObjectPermi
 		return true;
 	}
 	@Override
-	public Object getProperty() {
+	public ProfileProperty getProperty() {
 		// TODO Auto-generated method stub
 		return this;
-	}
-	@Override
-	public String toString() {
-		return object + " : CREDMV";
 	}
 	
 }

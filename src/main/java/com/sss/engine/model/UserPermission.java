@@ -1,7 +1,9 @@
 package com.sss.engine.model;
 
 import com.sss.engine.core.tags.ProfilePropertyAlias;
+import com.sss.engine.core.tags.ProfilePropertyKey;
 import com.sss.engine.core.tags.ProfilePropertyType;
+import com.sss.engine.core.tags.ProfilePropertySerializableField;
 
 @ProfilePropertyAlias(name = ProfilePropertyType.USER_PERMISSION)
 public class UserPermission implements ProfileProperty, Comparable<UserPermission>{
@@ -11,7 +13,9 @@ public class UserPermission implements ProfileProperty, Comparable<UserPermissio
 		// TODO Auto-generated method stub
 		return this.name.compareTo(o.getName());
 	}
+	@ProfilePropertyKey
 	private String name;
+	@ProfilePropertySerializableField
 	private Boolean enabled;
 	public String getName() {
 		return name;
@@ -49,13 +53,9 @@ public class UserPermission implements ProfileProperty, Comparable<UserPermissio
 		return true;
 	}
 	@Override
-	public Object getProperty() {
+	public ProfileProperty getProperty() {
 		// TODO Auto-generated method stub
 		return this;
 	}
-	@Override
-	public String toString() {
-		return name + " : E";
-	}
-	
+
 }

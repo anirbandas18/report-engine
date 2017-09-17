@@ -1,7 +1,9 @@
 package com.sss.engine.model;
 
 import com.sss.engine.core.tags.ProfilePropertyAlias;
+import com.sss.engine.core.tags.ProfilePropertyKey;
 import com.sss.engine.core.tags.ProfilePropertyType;
+import com.sss.engine.core.tags.ProfilePropertySerializableField;
 
 @ProfilePropertyAlias(name = ProfilePropertyType.TAB_VISIBILITY)
 public class TabVisibility implements ProfileProperty, Comparable<TabVisibility>{
@@ -11,7 +13,9 @@ public class TabVisibility implements ProfileProperty, Comparable<TabVisibility>
 		// TODO Auto-generated method stub
 		return this.tab.compareTo(o.getTab());
 	}
+	@ProfilePropertyKey
 	private String tab;
+	@ProfilePropertySerializableField
 	private String visibility;
 	public String getTab() {
 		return tab;
@@ -49,13 +53,9 @@ public class TabVisibility implements ProfileProperty, Comparable<TabVisibility>
 		return true;
 	}
 	@Override
-	public Object getProperty() {
+	public ProfileProperty getProperty() {
 		// TODO Auto-generated method stub
 		return this;
-	}
-	@Override
-	public String toString() {
-		return tab + " : V";
 	}
 	
 }

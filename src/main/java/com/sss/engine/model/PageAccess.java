@@ -1,7 +1,9 @@
 package com.sss.engine.model;
 
 import com.sss.engine.core.tags.ProfilePropertyAlias;
+import com.sss.engine.core.tags.ProfilePropertyKey;
 import com.sss.engine.core.tags.ProfilePropertyType;
+import com.sss.engine.core.tags.ProfilePropertySerializableField;
 
 @ProfilePropertyAlias(name = ProfilePropertyType.PAGE_ACCESS)
 public class PageAccess implements ProfileProperty,Comparable<PageAccess>{
@@ -11,7 +13,9 @@ public class PageAccess implements ProfileProperty,Comparable<PageAccess>{
 		// TODO Auto-generated method stub
 		return this.apexPage.compareTo(o.getApexPage());
 	}
+	@ProfilePropertyKey
 	private String apexPage;
+	@ProfilePropertySerializableField
 	private Boolean enabled;
 	public String getApexPage() {
 		return apexPage;
@@ -49,13 +53,9 @@ public class PageAccess implements ProfileProperty,Comparable<PageAccess>{
 		return true;
 	}
 	@Override
-	public Object getProperty() {
+	public ProfileProperty getProperty() {
 		// TODO Auto-generated method stub
 		return this;
-	}
-	@Override
-	public String toString() {
-		return apexPage + " : E";
 	}
 	
 }

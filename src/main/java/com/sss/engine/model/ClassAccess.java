@@ -35,9 +35,15 @@ public class ClassAccess  implements ProfileProperty, Comparable<ClassAccess> {
 	}
 
 	@Override
+	public ProfileProperty getProperty() {
+		// TODO Auto-generated method stub
+		return this;
+	}
+
+	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = super.hashCode();
+		int result = 1;
 		result = prime * result + ((apexClass == null) ? 0 : apexClass.hashCode());
 		return result;
 	}
@@ -46,7 +52,7 @@ public class ClassAccess  implements ProfileProperty, Comparable<ClassAccess> {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (!super.equals(obj))
+		if (obj == null)
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
@@ -57,12 +63,6 @@ public class ClassAccess  implements ProfileProperty, Comparable<ClassAccess> {
 		} else if (!apexClass.equals(other.apexClass))
 			return false;
 		return true;
-	}
-
-	@Override
-	public ProfileProperty getProperty() {
-		// TODO Auto-generated method stub
-		return this;
 	}
 
 }

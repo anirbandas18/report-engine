@@ -29,10 +29,16 @@ public class PageAccess implements ProfileProperty,Comparable<PageAccess>{
 	public void setEnabled(Boolean enabled) {
 		this.enabled = enabled;
 	}
+	
+	@Override
+	public ProfileProperty getProperty() {
+		// TODO Auto-generated method stub
+		return this;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = super.hashCode();
+		int result = 1;
 		result = prime * result + ((apexPage == null) ? 0 : apexPage.hashCode());
 		return result;
 	}
@@ -40,7 +46,7 @@ public class PageAccess implements ProfileProperty,Comparable<PageAccess>{
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (!super.equals(obj))
+		if (obj == null)
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
@@ -51,11 +57,6 @@ public class PageAccess implements ProfileProperty,Comparable<PageAccess>{
 		} else if (!apexPage.equals(other.apexPage))
 			return false;
 		return true;
-	}
-	@Override
-	public ProfileProperty getProperty() {
-		// TODO Auto-generated method stub
-		return this;
 	}
 	
 }

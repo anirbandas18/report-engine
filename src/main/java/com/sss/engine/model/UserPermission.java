@@ -29,18 +29,24 @@ public class UserPermission implements ProfileProperty, Comparable<UserPermissio
 	public void setEnabled(Boolean enabled) {
 		this.enabled = enabled;
 	}
+	
+	@Override
+	public ProfileProperty getProperty() {
+		// TODO Auto-generated method stub
+		return this;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((enabled == null) ? 0 : enabled.hashCode());
+		int result = 1;
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
 	}
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (!super.equals(obj))
+		if (obj == null)
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
@@ -51,11 +57,6 @@ public class UserPermission implements ProfileProperty, Comparable<UserPermissio
 		} else if (!name.equals(other.name))
 			return false;
 		return true;
-	}
-	@Override
-	public ProfileProperty getProperty() {
-		// TODO Auto-generated method stub
-		return this;
 	}
 
 }

@@ -28,6 +28,7 @@ import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Component;
 
 import com.sss.engine.core.tags.ProfilePropertyAlias;
+import com.sss.engine.core.tags.ProfilePropertyKey;
 import com.sss.engine.core.tags.ProfilePropertyType;
 import com.sss.engine.dto.FileWrapper;
 import com.sss.engine.model.Profile;
@@ -52,8 +53,6 @@ public class UtilityServiceImpl implements UtilityService {
 	
 	@Value("#{'${application.model.skip.properties}'.split(',')}")
 	private List<String> skipppedEntities;
-	@Value("${query1}")
-	private String josqlQuery1;
 	@Value("${csv.report.header.prefix}")
 	private String csvReportHeaderPrefix;
 	@Value(",")
@@ -111,7 +110,7 @@ public class UtilityServiceImpl implements UtilityService {
 		boolean currentTagBelongsToModel = false;
 		boolean chosenTag = false;
 		Object parentModel = null;// profile
-		Object currentModelProperty = null; // class with @ProfileField
+		Object currentModelProperty = null; // class implementing ProfileProperty
 		Class<?> currentModelPropertyClass = null;
 		Field currentModelPropertyField = null;
 		InputStream stream = new FileInputStream(fileLocation);
@@ -125,7 +124,7 @@ public class UtilityServiceImpl implements UtilityService {
 				if(tagClass != null && tagClass.equals(parentModelClass)) {
 					String fileName = fileSys.getFileNameFromPath(fileLocation);
 					List<Field> fields = new ArrayList<>(Arrays.asList(parentModelClass.getDeclaredFields()));
-					Field f = fields.stream().filter(x -> x.isAnnotationPresent(com.sss.engine.core.tags.ProfilePropertyKey.class)).findAny().orElse(null);
+					Field f = fields.stream().filter(x -> x.isAnnotationPresent(ProfilePropertyKey.class)).findAny().orElse(null);
 					parentModel = parentModelClass.newInstance();
 					if(f != null) {
 						f.setAccessible(true);
@@ -204,6 +203,8 @@ public class UtilityServiceImpl implements UtilityService {
 			String line = profileName + csvDelimitter;
 			for(ProfileProperty parent : allProperties) {
 				Map<String,String> parentFields = parent.formatSerilizableFields();
+				String blankTemplate = parentFields.size() > 1 ? "-/" : "-";
+				String blankCell = String.join("", Collections.nCopies(parentFields.size(), blankTemplate));
 				if(count < specificProperties.size()) {
 					ProfileProperty child = specificProperties.get(count);
 					if(parent.equals(child)) {
@@ -212,11 +213,11 @@ public class UtilityServiceImpl implements UtilityService {
 						line = line + formattedValues;
 						count++;
 					} else {
-						line = line + String.join("", Collections.nCopies(parentFields.size(), "-/"));
+						line = line + blankCell;
 					}
 					line = line + csvDelimitter;
 				} else {
-					line = line + String.join("", Collections.nCopies(parentFields.size(), "-/")) + csvDelimitter;
+					line = line + blankCell + csvDelimitter;
 				}
 			}
 			bw.write(line);

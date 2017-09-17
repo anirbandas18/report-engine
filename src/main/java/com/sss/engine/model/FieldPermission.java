@@ -39,17 +39,22 @@ public class FieldPermission implements ProfileProperty, Comparable<FieldPermiss
 	}
 	
 	@Override
+	public ProfileProperty getProperty() {
+		// TODO Auto-generated method stub
+		return this;
+	}
+	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((editable == null) ? 0 : editable.hashCode());
+		int result = 1;
+		result = prime * result + ((field == null) ? 0 : field.hashCode());
 		return result;
 	}
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (!super.equals(obj))
+		if (obj == null)
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
@@ -60,11 +65,6 @@ public class FieldPermission implements ProfileProperty, Comparable<FieldPermiss
 		} else if (!field.equals(other.field))
 			return false;
 		return true;
-	}
-	@Override
-	public ProfileProperty getProperty() {
-		// TODO Auto-generated method stub
-		return this;
 	}
 	
 }

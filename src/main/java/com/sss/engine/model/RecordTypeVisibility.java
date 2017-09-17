@@ -37,10 +37,16 @@ public class RecordTypeVisibility implements ProfileProperty, Comparable<RecordT
 	public void setRecordType(String recordType) {
 		this.recordType = recordType;
 	}
+	
+	@Override
+	public ProfileProperty getProperty() {
+		// TODO Auto-generated method stub
+		return this;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = super.hashCode();
+		int result = 1;
 		result = prime * result + ((recordType == null) ? 0 : recordType.hashCode());
 		return result;
 	}
@@ -48,7 +54,7 @@ public class RecordTypeVisibility implements ProfileProperty, Comparable<RecordT
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (!super.equals(obj))
+		if (obj == null)
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
@@ -59,11 +65,6 @@ public class RecordTypeVisibility implements ProfileProperty, Comparable<RecordT
 		} else if (!recordType.equals(other.recordType))
 			return false;
 		return true;
-	}
-	@Override
-	public ProfileProperty getProperty() {
-		// TODO Auto-generated method stub
-		return this;
 	}
 	
 }

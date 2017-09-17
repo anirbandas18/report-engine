@@ -13,10 +13,12 @@ public interface FileSystemService {
 	
 	public List<String> readFilesFromDirectory(String dirPath) throws IOException, InvalidDirectoryPathException;
 	
-	public Boolean writeFilesToDirectory(String dirLocation, List<FileWrapper> files) throws IOException;
+	public String writeFileToDirectory(String dirLocation, FileWrapper fw) throws IOException;
 	
 	public Boolean createDirectories(String dirPath)throws IOException, InvalidDirectoryPathException;
 	
 	public String getLastSegmentFromPath(String path) ;
+	
+	public String getFileNameFromPath(String path);
 
 }

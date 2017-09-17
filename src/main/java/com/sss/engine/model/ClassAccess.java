@@ -63,8 +63,7 @@ public class ClassAccess  implements ProfileProperty, Comparable<ClassAccess> {
 
 	@Override
 	public String toString() {
-		return "{apexClass=" + apexClass + "}";
+		return apexClass + " : E";
 	}
-	
 	
 }

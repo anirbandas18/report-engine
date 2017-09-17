@@ -55,7 +55,7 @@ public class UserPermission implements ProfileProperty, Comparable<UserPermissio
 	}
 	@Override
 	public String toString() {
-		return "{name=" + name + "}";
+		return name + " : E";
 	}
 	
 }

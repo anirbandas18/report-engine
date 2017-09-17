@@ -55,7 +55,7 @@ public class PageAccess implements ProfileProperty,Comparable<PageAccess>{
 	}
 	@Override
 	public String toString() {
-		return "{apexPage=" + apexPage + "}";
+		return apexPage + " : E";
 	}
 	
 }

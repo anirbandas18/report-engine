@@ -1,7 +1,10 @@
 package com.sss.engine.service.impl;
 
+import java.io.BufferedWriter;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -23,6 +26,7 @@ import org.springframework.stereotype.Component;
 
 import com.sss.engine.core.tags.ProfilePropertyAlias;
 import com.sss.engine.core.tags.ProfilePropertyType;
+import com.sss.engine.dto.FileWrapper;
 import com.sss.engine.model.Profile;
 import com.sss.engine.model.ProfileProperty;
 import com.sss.engine.repository.ProfileRepository;
@@ -33,7 +37,7 @@ import com.sss.engine.service.UtilityService;
 public class UtilityServiceImpl implements UtilityService {
 	
 	@Autowired
-	private ProfileRepository cache;
+	private ProfileRepository repository;
 	@Autowired
 	private XMLInputFactory xmlInputFactory;
 	@Autowired
@@ -47,6 +51,13 @@ public class UtilityServiceImpl implements UtilityService {
 	private List<String> skipppedEntities;
 	@Value("${query1}")
 	private String josqlQuery1;
+	@Value("${csv.report.header.prefix}")
+	private String csvReportHeaderPrefix;
+	@Value(",")
+	private String csvDelimitter;
+	@Value(".csv")
+	private String csvFileExtension;
+	
 	
 	@Override
 	public Class<? extends ProfileProperty> searchClassByTag(List<Class<? extends ProfileProperty>> list, String tagName) {
@@ -109,8 +120,7 @@ public class UtilityServiceImpl implements UtilityService {
 				tagName = xmlReader.getLocalName();
 				Class<?> tagClass = validateTag(filters, tagName);
 				if(tagClass != null && tagClass.equals(parentModelClass)) {
-					String fileName = fileSys.getLastSegmentFromPath(fileLocation);
-					fileName = fileName.split("\\.")[0];
+					String fileName = fileSys.getFileNameFromPath(fileLocation);
 					List<Field> fields = new ArrayList<>(Arrays.asList(parentModelClass.getDeclaredFields()));
 					Field f = fields.stream().filter(x -> x.isAnnotationPresent(com.sss.engine.core.tags.Key.class)).findAny().orElse(null);
 					parentModel = parentModelClass.newInstance();
@@ -142,8 +152,8 @@ public class UtilityServiceImpl implements UtilityService {
 					// save parentModel to cache
 					String processor = Thread.currentThread().getName();
 					Profile profile = (Profile) parentModel;
-					Boolean status = cache.storeProfile(profile.getName(), profile);
-					System.out.println("{name : " + profile.getName() + ", cacheStatus : " + status + ", processor : " + processor + "}");
+					Boolean status = repository.storeProfile(profile.getName(), profile);
+					System.out.println("{profileName : " + profile.getName() + ", storeStatus : " + status + ", profileProcessor : " + processor + "}");
 				} else if(tagClass != null) {
 					Method addProperty = parentModelClass.getDeclaredMethod("addProperty", ProfilePropertyType.class, ProfileProperty.class);
 					ProfilePropertyType key = getEnumForStringAlias(tagName.toLowerCase());
@@ -171,12 +181,35 @@ public class UtilityServiceImpl implements UtilityService {
 	}
 
 	@Override
-	public Future<String> generateCSV(String modelPropertyAlias) throws QueryParseException {
+	public Future<String> generateCSV(String csvDumpLocation, String fileNamePrefix, String alias) throws QueryParseException, IOException {
 		// TODO Auto-generated method stub
-		
-		return new AsyncResult<String>("");
+		String processorName = Thread.currentThread().getName();
+		StringWriter sw = new StringWriter();
+		BufferedWriter bw = new BufferedWriter(sw);
+		List<ProfileProperty> profileProperties = repository.fetchAllDistinctProfilePropertiesOfType(alias);
+		String header = createHeader(profileProperties);
+		bw.write(header);
+		bw.newLine();
+		bw.flush();
+		String report = sw.toString();
+		String name = fileNamePrefix + "_" + alias + csvFileExtension;
+		FileWrapper fw = new FileWrapper();
+		fw.setContent(report.getBytes());
+		fw.setName(name);
+		String reportLocation = fileSys.writeFileToDirectory(csvDumpLocation, fw);
+		String reportName = fileSys.getFileNameFromPath(reportLocation);
+		System.out.println("{reportName : " + reportName + ", reportProcessor : " + processorName + "}");
+		return new AsyncResult<String>(reportLocation);
 	}
 
+	private String createHeader(List<ProfileProperty> profileProperties) {
+		String header = csvReportHeaderPrefix + csvDelimitter;
+		String remainingHeader = profileProperties.toString();
+		remainingHeader = remainingHeader.substring(1, remainingHeader.length() - 1);
+		header = header + remainingHeader;
+		return header;
+	}
+	
 	@Override
 	public ProfilePropertyType getEnumForStringAlias(final String alias) {
 		// TODO Auto-generated method stub

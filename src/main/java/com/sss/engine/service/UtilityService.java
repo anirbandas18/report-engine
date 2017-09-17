@@ -1,5 +1,6 @@
 package com.sss.engine.service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Future;
@@ -20,7 +21,7 @@ public interface UtilityService {
 	public Future<Set<String>> parseXML(String xmlFileLocation, Set<String> filters) throws Exception;
 	
 	@Async
-	public Future<String> generateCSV(String modelPropertyAlias) throws QueryParseException;
+	public Future<String> generateCSV(String csvDumpLocation, String fileNamePrefix, String alias) throws QueryParseException, IOException;
 	
 	public ProfilePropertyType getEnumForStringAlias(final String alias);
 

@@ -63,7 +63,7 @@ public class FieldPermission implements ProfileProperty, Comparable<FieldPermiss
 	}
 	@Override
 	public String toString() {
-		return "{field=" + field + "}";
+		return field + " : ER";
 	}
 	
 }

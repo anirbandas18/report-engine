@@ -93,7 +93,7 @@ public class ObjectPermission implements ProfileProperty, Comparable<ObjectPermi
 	}
 	@Override
 	public String toString() {
-		return "{object=" + object + "}";
+		return object + " : CREDMV";
 	}
 	
 }

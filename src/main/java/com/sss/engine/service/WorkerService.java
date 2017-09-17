@@ -12,6 +12,6 @@ public interface WorkerService {
 	
 	public Set<String> parseAndLoadDataSet(ReportMetadata metadata) throws Exception;
 	
-	public List<String> processAndDumpDataSet(ReportMetadata metadata) throws Exception;
+	public Integer processAndDumpDataSet(ReportMetadata metadata) throws Exception;
 
 }

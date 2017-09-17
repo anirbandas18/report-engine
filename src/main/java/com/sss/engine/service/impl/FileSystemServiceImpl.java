@@ -35,17 +35,15 @@ public class FileSystemServiceImpl implements FileSystemService {
 	}
 
 	@Override
-	public Boolean writeFilesToDirectory(String dirLocation, List<FileWrapper> files) throws IOException {
+	public String writeFileToDirectory(String dirLocation, FileWrapper fw) throws IOException {
 		// TODO Auto-generated method stub
 		Path dirPath = Paths.get(dirLocation);
 		if(!Files.exists(dirPath)) {
 			dirPath = Files.createDirectories(dirPath);
 		}
-		for(FileWrapper f : files) {
-			Path filePath = Paths.get(dirPath.toString(), f.getName());
-			filePath = Files.write(filePath, f.getContent());
-		}
-		return null;
+		Path filePath = Paths.get(dirPath.toString(), fw.getName());
+		filePath = Files.write(filePath, fw.getContent());
+		return filePath.toString();
 	}
 
 	@Override
@@ -72,6 +70,14 @@ public class FileSystemServiceImpl implements FileSystemService {
 		int beginIndex = dirLocation.lastIndexOf(pathSeparator) + 1;
 		String lastDirName = dirLocation.substring(beginIndex);
 		return lastDirName;
+	}
+
+	@Override
+	public String getFileNameFromPath(String path) {
+		// TODO Auto-generated method stub
+		String fileName = getLastSegmentFromPath(path);
+		fileName = fileName.split("\\.")[0];
+		return fileName;
 	}
 
 }

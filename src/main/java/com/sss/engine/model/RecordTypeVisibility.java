@@ -63,7 +63,7 @@ public class RecordTypeVisibility implements ProfileProperty, Comparable<RecordT
 	}
 	@Override
 	public String toString() {
-		return "{recordType=" + recordType + "}";
+		return recordType + " : DV";
 	}
 	
 }

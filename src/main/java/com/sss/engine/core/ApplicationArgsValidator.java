@@ -43,7 +43,7 @@ public class ApplicationArgsValidator implements Validator {
 		// TODO Auto-generated method stub
 		args = (ApplicationArguments) target;
 		if(args.getSourceArgs().length == 0) {
-			errors.reject("no.args", "Error: No arguments specified! " + options.getApplicationHelpMessage());
+			errors.reject("no.args", "Error: No arguments specified!\n" + options.getApplicationHelpMessage());
 		} else {
 			if(!validateOption(options.getInput(), errors)) {
 				// log error

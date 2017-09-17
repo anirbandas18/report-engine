@@ -15,7 +15,7 @@ public class TabVisibility implements ProfileProperty, Comparable<TabVisibility>
 	}
 	@ProfilePropertyKey
 	private String tab;
-	@ProfilePropertySerializableField
+	@ProfilePropertySerializableField(isShorthand = false)
 	private String visibility;
 	public String getTab() {
 		return tab;

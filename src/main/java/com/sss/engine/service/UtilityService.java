@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Future;
 
-import org.josql.QueryParseException;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +20,7 @@ public interface UtilityService {
 	public Future<Set<String>> parseXML(String xmlFileLocation, Set<String> filters) throws Exception;
 	
 	@Async
-	public Future<String> generateCSV(String csvDumpLocation, String fileNamePrefix, String alias) throws QueryParseException, IOException;
+	public Future<String> generateCSV(String csvDumpLocation, String fileNamePrefix, String alias) throws IOException;
 	
 	public ProfilePropertyType getEnumForStringAlias(final String alias);
 

@@ -21,7 +21,6 @@ import javax.annotation.Resource;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
-import org.josql.QueryParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.AsyncResult;
@@ -183,7 +182,7 @@ public class UtilityServiceImpl implements UtilityService {
 	}
 
 	@Override
-	public Future<String> generateCSV(String csvDumpLocation, String fileNamePrefix, String alias) throws QueryParseException, IOException {
+	public Future<String> generateCSV(String csvDumpLocation, String fileNamePrefix, String alias) throws  IOException {
 		// TODO Auto-generated method stub
 		String processorName = Thread.currentThread().getName();
 		StringWriter sw = new StringWriter();

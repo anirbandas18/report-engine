@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.josql.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,8 +22,6 @@ public class ProfileRepositoryImpl implements ProfileRepository {
 	
 	@Autowired
 	private Map<String,Profile> profileCache;
-	@Autowired
-	private Query query;
 	@Autowired
 	private UtilityService service;
 

@@ -8,9 +8,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListMap;
 
+import javax.management.Query;
 import javax.xml.stream.XMLInputFactory;
 
-import org.josql.Query;
 import org.reflections.Reflections;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -79,3 +79,4 @@ public class ReportEngineConfiguration {
 	}
 	
 }
+	

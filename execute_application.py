@@ -1,5 +1,6 @@
 import subprocess, os
 
+# constants with global scope
 INPUT = "--input"
 OUTPUT = "--output"
 FILTERS = "--filters"
@@ -8,10 +9,11 @@ JAR_NAME = "report-engine.jar"
 
 def build_jar(should_package):
     # check if jar is to be built 
-    if len(should_package) != 0 and (should_package[0] == 'Y' or should_package[0] == 'y'):     
-        # build jar using maven through an external process spawned from python
+    if len(should_package) != 0 and (should_package[0] == 'Y' or should_package[0] == 'y'):   
+        # define build commands for maven  
         mvn_cmd = ['mvn', 'clean', 'package']
         print("\nBuilding " + JAR_NAME + " from src using command:\n" + ' '.join(mvn_cmd) + '\n')
+        # build jar using maven through an external process spawned from python
         mvn_process = subprocess.Popen(mvn_cmd, shell=True)
         mvn_process.wait()
         return mvn_process.returncode
@@ -19,12 +21,13 @@ def build_jar(should_package):
 def execute_jar(app_cmd_args):
     # form jar file path based on underlying os
     jar_location = os.path.join(JAR_DIRECTORY,JAR_NAME)
-    # execute jar using java through an external process spawned from python
+    # define commands for executing .jar file using java
     jar_cmd = ['java', '-jar',  jar_location]
-    # format arguments
+    # parse arguments
     for key,value in app_cmd_args.items():
         jar_cmd.append(key + '=' + value)
     print("\nExecuting " + JAR_NAME + " using command: \n" + ' '.join(jar_cmd) + '\n')
+    # execute jar using java through an external process spawned from python
     jar_process = subprocess.Popen(jar_cmd, shell=True)
     jar_process.wait()
     print('\nReport engine finished execution!')
@@ -35,7 +38,7 @@ def main():
     output_path = input("Enter the directory path where reports will be dumped (--output): ")
     filters = input("Profile properties for which reports will be generated (--filters optional): ")
     should_package = input("\nBuild " + JAR_NAME + " file from src (Y/N) ? ")
-    # build arguments
+    # format arguments
     app_cmd_args = dict([(INPUT,input_path), (OUTPUT,output_path)])
     if len(filters) != 0:
         app_cmd_args[FILTERS] = filters
@@ -45,8 +48,9 @@ def main():
     elif len(app_cmd_args.get(OUTPUT)) == 0:
         print("\n" + OUTPUT + " option is mandatory! Please re-run the execute_application.py script\n")
     else :
+        # arguments validated successfully
         exit_code = build_jar(should_package)
-        #execute .jar file only if maven build is successful
+        # execute .jar file only if maven build is successful
         print("\nMaven exit code: " + str(exit_code)) 
         if exit_code == 0:
             execute_jar(app_cmd_args)

@@ -17,20 +17,24 @@ def build_jar(should_package):
         mvn_process = subprocess.Popen(mvn_cmd, shell=True)
         mvn_process.wait()
         return mvn_process.returncode
+    else:
+        return None
     
-def execute_jar(app_cmd_args):
-    # form jar file path based on underlying os
-    jar_location = os.path.join(JAR_DIRECTORY,JAR_NAME)
-    # define commands for executing .jar file using java
-    jar_cmd = ['java', '-jar',  jar_location]
-    # parse arguments
-    for key,value in app_cmd_args.items():
-        jar_cmd.append(key + '=' + value)
-    print("\nExecuting " + JAR_NAME + " using command: \n" + ' '.join(jar_cmd) + '\n')
-    # execute jar using java through an external process spawned from python
-    jar_process = subprocess.Popen(jar_cmd, shell=True)
-    jar_process.wait()
-    print('\nReport engine finished execution!')
+def execute_jar(should_run,app_cmd_args):
+    # check if jar is to be run 
+    if len(should_run) != 0 and (should_run[0] == 'Y' or should_run[0] == 'y'):     
+        # form jar file path based on underlying os
+        jar_location = os.path.join(JAR_DIRECTORY,JAR_NAME)
+        # define commands for executing .jar file using java
+        jar_cmd = ['java', '-jar',  jar_location]
+        # parse arguments
+        for key,value in app_cmd_args.items():
+            jar_cmd.append(key + '=' + value)
+        print("\nExecuting " + JAR_NAME + " using command: \n" + ' '.join(jar_cmd) + '\n')
+        # execute jar using java through an external process spawned from python
+        jar_process = subprocess.Popen(jar_cmd, shell=True)
+        jar_process.wait()
+        print('\nReport engine finished execution!')
     
 def main():
     # input from user through stdin
@@ -44,16 +48,17 @@ def main():
         app_cmd_args[FILTERS] = filters
     # validate arguments
     if len(app_cmd_args.get(INPUT)) == 0:
-        print("\n" + INPUT + " option is mandatory! Please re-run the execute_application.py script\n")
+        print("\n" + INPUT + " option is mandatory! Please re-run the report_engine_cli_wrapper.py script\n")
     elif len(app_cmd_args.get(OUTPUT)) == 0:
-        print("\n" + OUTPUT + " option is mandatory! Please re-run the execute_application.py script\n")
+        print("\n" + OUTPUT + " option is mandatory! Please re-run the report_engine_cli_wrapper.py script\n")
     else :
         # arguments validated successfully
         exit_code = build_jar(should_package)
         # execute .jar file only if maven build is successful
         print("\nMaven exit code: " + str(exit_code)) 
-        if exit_code == 0:
-            execute_jar(app_cmd_args)
+        if exit_code == 0 or exit_code == None:
+            should_run = input("\nRun " + JAR_NAME + " file from target (Y/N) ? ")
+            execute_jar(should_run,app_cmd_args)
 
 if __name__ == '__main__':
     main()

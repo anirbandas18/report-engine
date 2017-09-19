@@ -49,10 +49,9 @@ def main():
     # validate arguments
     if len(app_cmd_args.get(INPUT)) == 0:
         print("\n" + INPUT + " option is mandatory! Please re-run the cli_wrapper.py script\n")
-    elif len(app_cmd_args.get(OUTPUT)) == 0:
-        #print("\n" + OUTPUT + " option is mandatory! Please re-run the cli_wrapper.py script\n")
-        app_cmd_args.pop(OUTPUT)
     else :
+        if len(app_cmd_args.get(OUTPUT)) == 0:
+            app_cmd_args.pop(OUTPUT)
         # arguments validated successfully
         exit_code = build_jar(should_package)
         # execute .jar file only if maven build is successful

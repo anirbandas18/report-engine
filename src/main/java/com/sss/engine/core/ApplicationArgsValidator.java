@@ -15,6 +15,7 @@ public class ApplicationArgsValidator implements Validator {
 
 	@Autowired
 	private ApplicationCLIOptions options;
+	
 	private ApplicationArguments args;
 	
 	@Override
@@ -23,7 +24,8 @@ public class ApplicationArgsValidator implements Validator {
 		return ApplicationArguments.class.equals(clazz);
 	}
 
-	private Boolean validateOption(String optionName, Errors errors) {
+	private Boolean validateInput(Errors errors) {
+		String optionName = options.getInput();
 		List<String> values = args.getOptionValues(optionName);
 		Boolean flag = false;
 		if(values == null) {
@@ -38,6 +40,18 @@ public class ApplicationArgsValidator implements Validator {
 		return flag;
 	}
 	
+	private Boolean validateOutput(Errors errors) {
+		String optionName = options.getOutput();
+		List<String> values = args.getOptionValues(optionName);
+		Boolean flag = false;
+		if(values.size() > 1) {
+			errors.reject("multiple." + optionName + ".value", "Error: Too many values found! --" + optionName + " option should have exactly one value");
+		} else {
+			flag = true;
+		}
+		return flag;
+	}
+	
 	@Override
 	public void validate(Object target, Errors errors) {
 		// TODO Auto-generated method stub
@@ -45,12 +59,12 @@ public class ApplicationArgsValidator implements Validator {
 		if(args.getSourceArgs().length == 0) {
 			errors.reject("no.args", "Error: No arguments specified!\n" + options.getApplicationHelpMessage());
 		} else {
-			if(!validateOption(options.getInput(), errors)) {
+			if(!validateInput(errors)) {
 				// log error
 			} 
-			if(!validateOption(options.getOutput(), errors)) {
+			if(!validateOutput(errors)) {
 				// log error
-			}
+			} 
 		} 
 	}
 

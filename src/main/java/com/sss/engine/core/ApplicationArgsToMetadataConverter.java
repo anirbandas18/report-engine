@@ -1,13 +1,16 @@
 package com.sss.engine.core;
 
+import java.nio.file.FileSystems;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.sss.engine.dto.ApplicationCLIOptions;
 import com.sss.engine.dto.ReportMetadata;
@@ -21,11 +24,20 @@ public class ApplicationArgsToMetadataConverter implements Converter<Application
 	@Autowired
 	private FileSystemService fileSys;
 	
+	@Value("#{systemProperties['user.dir']}")
+	private String currentWorkingDirectory;
+	@Value("${default.report.dump.location.directory}")
+	private String defaultDumpLocationDirectory;
+	
+	
 	@Override
 	public ReportMetadata convert(ApplicationArguments source) {
 		// TODO Auto-generated method stub
 		String input = source.getOptionValues(options.getInput()).get(0);
 		String output = source.getOptionValues(options.getOutput()).get(0);
+		if(!StringUtils.hasText(output)) {
+			output = currentWorkingDirectory + FileSystems.getDefault().getSeparator() + defaultDumpLocationDirectory;
+		}
 		List<String> f = source.getOptionValues(options.getFilters());
 		Set<String> filters = new LinkedHashSet<>();
 		if(f != null) {

@@ -18,7 +18,7 @@ import com.sss.engine.service.FileSystemService;
 
 @Component
 public class FileSystemServiceImpl implements FileSystemService {
-	
+
 	@Value("#{'${filter.files.with.extensions}'.split(',')}")
 	private List<String> fileExtensions;
 
@@ -26,13 +26,13 @@ public class FileSystemServiceImpl implements FileSystemService {
 	public List<String> readFilesFromDirectory(String dirLocation) throws IOException, InvalidDirectoryPathException {
 		// TODO Auto-generated method stub
 		Path dirPath = Paths.get(dirLocation);
-		if(Files.isDirectory(dirPath)) {
+		if (Files.isDirectory(dirPath)) {
 			DirectoryStream<Path> filePaths = Files.newDirectoryStream(dirPath);
 			List<String> fileLocations = new ArrayList<>();
-			for(Path fp : filePaths) {
+			for (Path fp : filePaths) {
 				// filter only .profile files
-				if(!Files.isDirectory(fp)) {
-					if(fileExtensions.contains(getFileExtensionFromPath(fp.toString()))) {
+				if (!Files.isDirectory(fp)) {
+					if (fileExtensions.contains(getFileExtensionFromPath(fp.toString()))) {
 						fileLocations.add(fp.toString());
 					}
 				}
@@ -47,7 +47,7 @@ public class FileSystemServiceImpl implements FileSystemService {
 	public String writeFileToDirectory(String dirLocation, FileWrapper fw) throws IOException {
 		// TODO Auto-generated method stub
 		Path dirPath = Paths.get(dirLocation);
-		if(!Files.exists(dirPath)) {
+		if (!Files.exists(dirPath)) {
 			dirPath = Files.createDirectories(dirPath);
 		}
 		Path filePath = Paths.get(dirPath.toString(), fw.getName());
@@ -59,8 +59,8 @@ public class FileSystemServiceImpl implements FileSystemService {
 	public Boolean createDirectories(String dirLocation) throws IOException, InvalidDirectoryPathException {
 		// TODO Auto-generated method stub
 		Path dirPath = Paths.get(dirLocation);
-		if(Files.isDirectory(dirPath)) {
-			if(!Files.exists(dirPath)) {
+		if (Files.isDirectory(dirPath)) {
+			if (!Files.exists(dirPath)) {
 				Path x = Files.createDirectories(dirPath);
 				return x.equals(dirPath);
 			} else {
@@ -88,13 +88,17 @@ public class FileSystemServiceImpl implements FileSystemService {
 		fileName = fileName.split("\\.")[0];
 		return fileName;
 	}
-	
+
 	@Override
 	public String getFileExtensionFromPath(String path) {
 		// TODO Auto-generated method stub
-		String fileExtension = getLastSegmentFromPath(path);
-		fileExtension = fileExtension.split("\\.")[1];
-		return fileExtension;
+		String fileName = getLastSegmentFromPath(path);
+		String tokens[] = fileName.split("\\.");
+		if (tokens.length == 2) {
+			return tokens[1];
+		} else {
+			return null;
+		}
 	}
 
 }

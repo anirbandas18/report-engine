@@ -50,7 +50,8 @@ def main():
     if len(app_cmd_args.get(INPUT)) == 0:
         print("\n" + INPUT + " option is mandatory! Please re-run the cli_wrapper.py script\n")
     elif len(app_cmd_args.get(OUTPUT)) == 0:
-        print("\n" + OUTPUT + " option is mandatory! Please re-run the cli_wrapper.py script\n")
+        #print("\n" + OUTPUT + " option is mandatory! Please re-run the cli_wrapper.py script\n")
+        app_cmd_args.pop(OUTPUT)
     else :
         # arguments validated successfully
         exit_code = build_jar(should_package)

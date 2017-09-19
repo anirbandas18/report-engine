@@ -34,8 +34,10 @@ public class ApplicationArgsToMetadataConverter implements Converter<Application
 	public ReportMetadata convert(ApplicationArguments source) {
 		// TODO Auto-generated method stub
 		String input = source.getOptionValues(options.getInput()).get(0);
-		String output = source.getOptionValues(options.getOutput()).get(0);
-		if(!StringUtils.hasText(output)) {
+		String output = "";
+		if(source.containsOption(options.getOutput())) {
+			output = source.getOptionValues(options.getOutput()).get(0);
+		} else {
 			output = currentWorkingDirectory + FileSystems.getDefault().getSeparator() + defaultDumpLocationDirectory;
 		}
 		List<String> f = source.getOptionValues(options.getFilters());

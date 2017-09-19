@@ -44,7 +44,7 @@ public class ApplicationArgsValidator implements Validator {
 		String optionName = options.getOutput();
 		List<String> values = args.getOptionValues(optionName);
 		Boolean flag = false;
-		if(values.size() > 1) {
+		if(values != null && values.size() > 1) {
 			errors.reject("multiple." + optionName + ".value", "Error: Too many values found! --" + optionName + " option should have exactly one value");
 		} else {
 			flag = true;

@@ -21,4 +21,6 @@ public interface FileSystemService {
 	
 	public String getFileNameFromPath(String path);
 
+	String getFileExtensionFromPath(String path);
+
 }

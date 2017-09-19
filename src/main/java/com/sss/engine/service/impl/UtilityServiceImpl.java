@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.xml.stream.XMLInputFactory;
@@ -28,6 +29,7 @@ import org.springframework.stereotype.Component;
 
 import com.sss.engine.core.tags.ProfilePropertyAlias;
 import com.sss.engine.core.tags.ProfilePropertyKey;
+import com.sss.engine.core.tags.ProfilePropertySerializableField;
 import com.sss.engine.core.tags.ProfilePropertyType;
 import com.sss.engine.dto.FileWrapper;
 import com.sss.engine.model.Profile;
@@ -141,7 +143,19 @@ public class UtilityServiceImpl implements UtilityService {
 							currentTagBelongsToModel = true;
 						} catch (NoSuchFieldException e) {
 							// swallow exception for skipping tag
-							currentTagBelongsToModel = false;
+							Boolean found = false;
+							List<Field> fields = new ArrayList<>(Arrays.asList(currentModelPropertyClass.getDeclaredFields()));
+							for(Field f : fields) {
+								if(f.isAnnotationPresent(ProfilePropertySerializableField.class)) {
+									ProfilePropertySerializableField ann = f.getDeclaredAnnotation(ProfilePropertySerializableField.class);
+									if(ann.name().equalsIgnoreCase(tagName)) {
+										found = true;
+										currentModelPropertyField = f;
+										break;
+									}
+								}
+							}
+							currentTagBelongsToModel = found;
 						}
 					}
 				}

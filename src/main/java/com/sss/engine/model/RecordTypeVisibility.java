@@ -13,7 +13,7 @@ public class RecordTypeVisibility implements ProfileProperty, Comparable<RecordT
 		// TODO Auto-generated method stub
 		return this.recordType.compareTo(o.getRecordType());
 	}
-	@ProfilePropertySerializableField
+	@ProfilePropertySerializableField(name = "default")
 	private Boolean default_;
 	@ProfilePropertySerializableField
 	private Boolean visible;

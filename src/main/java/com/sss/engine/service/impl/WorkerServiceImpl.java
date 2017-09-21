@@ -2,7 +2,9 @@ package com.sss.engine.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -58,15 +60,16 @@ public class WorkerServiceImpl implements WorkerService {
 		List<Future<String>> jobs = new ArrayList<>();
 		List<Future<String>> filteredReportJobs = generateFilteredReports(metadata);
 		jobs.addAll(filteredReportJobs);
-		//Future<List<String>> supplementaryReportJobs = generateSupplementaryReports(metadata);
-		//reportLocations.addAll(supplementaryReportJobs.get());
 		for(Future<String> job : jobs) {
 			String reportFileLocation = job.get();
 			if(StringUtils.hasText(reportFileLocation)) {
 				noOfReports++;
 			}
 		}
-		return noOfReports;
+		/*Future<List<String>> supplementaryReportJobs = generateSupplementaryReports(metadata);
+		List<String> supplementaryReportNames = supplementaryReportJobs.get();
+		noOfReports = noOfReports + supplementaryReportNames.size();
+		*/return noOfReports;
 	}
 	
 	private List<Future<String>> generateFilteredReports(ReportMetadata metadata) throws Exception {
@@ -80,13 +83,18 @@ public class WorkerServiceImpl implements WorkerService {
 	
 	@Async("applicationSubThreadPool")
 	public Future<List<String>> generateSupplementaryReports(ReportMetadata metadata) throws Exception {
-		List<String> supplementaryReportsLocation = new ArrayList<>();
+		List<String> reportNames = new ArrayList<>();
+		Map<String,Future<List<String>>> supplementaryReportsNames = new TreeMap<>();
 		for(String alias : metadata.getSupplementaryProperties()) {
 			Future<List<String>> job = util.generateSupplementaryProfilePropertiesCSVs(metadata.getOutputLocation(), metadata.getReportNamePrefix(), alias);
-			List<String> reportlocations = job.get();
-			supplementaryReportsLocation.addAll(reportlocations);
+			supplementaryReportsNames.put(alias, job);
 		}
-		return new AsyncResult<>(supplementaryReportsLocation);
+		for(String alias : supplementaryReportsNames.keySet()) {
+			Future<List<String>> job = supplementaryReportsNames.get(alias);
+			List<String> reportNamesFromJob = job.get();
+			reportNames.addAll(reportNamesFromJob);
+		}
+		return new AsyncResult<>(reportNames);
 	}
 
 }

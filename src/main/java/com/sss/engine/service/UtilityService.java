@@ -16,7 +16,7 @@ public interface UtilityService {
 	
 	public Class<? extends ProfileProperty> searchClassByTag(List<Class<? extends ProfileProperty>> list, String tagName);
 	
-	@Async/*(value = "xmlParser")*/
+	@Async
 	public Future<Set<String>> parseXML(String xmlFileLocation, Set<String> processableTags) throws Exception;
 	
 	@Async

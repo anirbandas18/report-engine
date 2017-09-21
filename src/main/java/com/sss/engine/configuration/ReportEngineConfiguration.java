@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentSkipListMap;
 
 import javax.management.Query;
@@ -14,11 +15,11 @@ import javax.xml.stream.XMLInputFactory;
 import org.reflections.Reflections;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Scope;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
+import com.sss.engine.core.tags.ProfilePropertyType;
 import com.sss.engine.model.Profile;
 import com.sss.engine.model.ProfileProperty;
 
@@ -46,6 +47,15 @@ public class ReportEngineConfiguration {
 		List<Class<? extends ProfileProperty>> applicationModelClassList = new ArrayList<>(applicationModelClassSet);
 		Collections.sort(applicationModelClassList, classComparator );
 		return applicationModelClassList;
+	}
+	
+	@Bean
+	public Set<String> modelProperties() {
+		Set<String> modelProperties = new TreeSet<>();
+		for(ProfilePropertyType type : ProfilePropertyType.values()) {
+			modelProperties.add(type.getValue());
+		}
+		return modelProperties;
 	}
 
 	@Bean

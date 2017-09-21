@@ -22,11 +22,16 @@ public class ApplicationArgsToMetadataConverter implements Converter<Application
 	private ApplicationCLIOptions options;
 	@Autowired
 	private FileSystemService fileSys;
+	@Autowired
+	private Set<String> modelProperties;
+	
 	
 	@Value("#{systemProperties['user.dir']}")
 	private String currentWorkingDirectory;
 	@Value("${default.report.dump.location.directory}")
 	private String defaultDumpLocationDirectory;
+	@Value("#{'${application.model.skip.properties}'.split(',')}")
+	private List<String> skippableModelProperties;
 	
 	
 	@Override
@@ -45,6 +50,9 @@ public class ApplicationArgsToMetadataConverter implements Converter<Application
 			for(String x : f) {
 				filters.add(x.toLowerCase());
 			}
+		} else {
+			filters.addAll(modelProperties);
+			filters.removeAll(skippableModelProperties);
 		}
 		List<String> s = source.getOptionValues(options.getSupplements());
 		Set<String> supplements = new LinkedHashSet<>();

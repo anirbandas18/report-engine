@@ -6,13 +6,13 @@ import com.sss.engine.core.tags.ProfilePropertyType;
 import com.sss.engine.core.tags.ProfilePropertySerializableField;
 
 @ProfilePropertyAlias(name = ProfilePropertyType.TAB_VISIBILITY)
-public class TabVisibility implements ProfileProperty, Comparable<TabVisibility>{
+public class TabVisibility implements ProfileProperty/*, Comparable<TabVisibility>*/{
 
-	@Override
+	/*@Override
 	public int compareTo(TabVisibility o) {
 		// TODO Auto-generated method stub
 		return this.tab.compareTo(o.getTab());
-	}
+	}*/
 	@ProfilePropertyKey
 	private String tab;
 	@ProfilePropertySerializableField(isShorthand = false)
@@ -57,6 +57,11 @@ public class TabVisibility implements ProfileProperty, Comparable<TabVisibility>
 		} else if (!tab.equals(other.tab))
 			return false;
 		return true;
+	}
+	@Override
+	public int compareTo(ProfileProperty o) {
+		// TODO Auto-generated method stub
+		return this.tab.compareTo(o.getProfilePropertyKey());
 	}
 	
 }

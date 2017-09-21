@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 public class ReportMetadata {
 	
 	private Set<String> propertyFilters;
+	private Set<String> supplementaryProperties;
 	private String inputLocation;
 	private String outputLocation;
 	private String reportNamePrefix;
@@ -36,11 +37,19 @@ public class ReportMetadata {
 	public void setReportNamePrefix(String reportNamePrefix) {
 		this.reportNamePrefix = reportNamePrefix;
 	}
+	public Set<String> getSupplementaryProperties() {
+		return supplementaryProperties;
+	}
+	public void setSupplementaryProperties(Set<String> supplementaryProperties) {
+		this.supplementaryProperties = supplementaryProperties;
+	}
 	@Override
 	public String toString() {
-		return "{propertyFilters=" + propertyFilters + ", inputLocation=" + inputLocation + ", outputLocation="
-				+ outputLocation + ", reportNamePrefix=" + reportNamePrefix + "}";
+		return "{propertyFilters=" + propertyFilters + ", supplementaryProperties=" + supplementaryProperties
+				+ ", inputLocation=" + inputLocation + ", outputLocation=" + outputLocation + ", reportNamePrefix="
+				+ reportNamePrefix + "}";
 	}
+	
 	
 
 }

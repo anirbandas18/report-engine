@@ -16,11 +16,14 @@ public interface UtilityService {
 	
 	public Class<? extends ProfileProperty> searchClassByTag(List<Class<? extends ProfileProperty>> list, String tagName);
 	
-	@Async
-	public Future<Set<String>> parseXML(String xmlFileLocation, Set<String> filters) throws Exception;
+	@Async/*(value = "xmlParser")*/
+	public Future<Set<String>> parseXML(String xmlFileLocation, Set<String> processableTags) throws Exception;
 	
-	@Async
-	public Future<String> generateCSV(String csvDumpLocation, String fileNamePrefix, String alias) throws IOException;
+	@Async/*(value = "filteredReportsGenerator")*/
+	public Future<String> generateFilteredProfilePropertiesCSV(String csvDumpLocation, String fileNamePrefix, String alias) throws IOException;
+
+	@Async(value = "applicationSubThreadPool")
+	public Future<List<String>> generateSupplementaryProfilePropertiesCSVs(String csvDumpLocation, String fileNamePrefix, String alias) throws Exception;
 	
 	public ProfilePropertyType getEnumForStringAlias(final String alias);
 

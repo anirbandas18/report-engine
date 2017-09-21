@@ -6,13 +6,13 @@ import com.sss.engine.core.tags.ProfilePropertyType;
 import com.sss.engine.core.tags.ProfilePropertySerializableField;
 
 @ProfilePropertyAlias(name = ProfilePropertyType.RECORD_TYPE_VISIBILITY)
-public class RecordTypeVisibility implements ProfileProperty, Comparable<RecordTypeVisibility>{
+public class RecordTypeVisibility implements ProfileProperty/*, Comparable<RecordTypeVisibility>*/{
 
-	@Override
+	/*@Override
 	public int compareTo(RecordTypeVisibility o) {
 		// TODO Auto-generated method stub
 		return this.recordType.compareTo(o.getRecordType());
-	}
+	}*/
 	@ProfilePropertySerializableField(name = "default")
 	private Boolean default_;
 	@ProfilePropertySerializableField
@@ -65,6 +65,11 @@ public class RecordTypeVisibility implements ProfileProperty, Comparable<RecordT
 		} else if (!recordType.equals(other.recordType))
 			return false;
 		return true;
+	}
+	@Override
+	public int compareTo(ProfileProperty o) {
+		// TODO Auto-generated method stub
+		return this.recordType.compareTo(o.getProfilePropertyKey());
 	}
 	
 }

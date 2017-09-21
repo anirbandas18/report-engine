@@ -16,6 +16,8 @@ public class ApplicationCLIOptions {
 	private String output;
 	@Value("filters")
 	private String filters;
+	@Value("supplements")
+	private String supplements;
 	public String getHelp() {
 		return help;
 	}
@@ -45,6 +47,12 @@ public class ApplicationCLIOptions {
 	}
 	public void setApplicationHelpMessage(String applicationHelpMessage) {
 		this.applicationHelpMessage = applicationHelpMessage;
+	}
+	public String getSupplements() {
+		return supplements;
+	}
+	public void setSupplements(String supplements) {
+		this.supplements = supplements;
 	}
 	
 	

@@ -6,19 +6,19 @@ import com.sss.engine.core.tags.ProfilePropertyType;
 import com.sss.engine.core.tags.ProfilePropertySerializableField;
 
 @ProfilePropertyAlias(name = ProfilePropertyType.FIELD_PERMISSION)
-public class FieldPermission implements ProfileProperty, Comparable<FieldPermission>{
+public class FieldPermission implements ProfileProperty/*, Comparable<FieldPermission>*/{
 
+	@ProfilePropertySerializableField
+	private Boolean readable;
 	@ProfilePropertySerializableField
 	private Boolean editable;
 	@ProfilePropertyKey
 	private String field;
-	@ProfilePropertySerializableField
-	private Boolean readable;
-	@Override
+	/*@Override
 	public int compareTo(FieldPermission o) {
 		// TODO Auto-generated method stub
 		return this.field.compareTo(o.getField());
-	}
+	}*/
 	public Boolean getEditable() {
 		return editable;
 	}
@@ -65,6 +65,11 @@ public class FieldPermission implements ProfileProperty, Comparable<FieldPermiss
 		} else if (!field.equals(other.field))
 			return false;
 		return true;
+	}
+	@Override
+	public int compareTo(ProfileProperty o) {
+		// TODO Auto-generated method stub
+		return this.field.compareTo(o.getProfilePropertyKey());
 	}
 	
 }

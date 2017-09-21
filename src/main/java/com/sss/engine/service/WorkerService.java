@@ -1,6 +1,5 @@
 package com.sss.engine.service;
 
-import java.util.List;
 import java.util.Set;
 
 import org.springframework.stereotype.Service;
@@ -13,5 +12,5 @@ public interface WorkerService {
 	public Set<String> parseAndLoadDataSet(ReportMetadata metadata) throws Exception;
 	
 	public Integer processAndDumpDataSet(ReportMetadata metadata) throws Exception;
-
+	
 }

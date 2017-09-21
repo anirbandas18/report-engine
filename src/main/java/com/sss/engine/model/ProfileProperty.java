@@ -12,10 +12,12 @@ import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sss.engine.core.tags.ProfilePropertyAlias;
 import com.sss.engine.core.tags.ProfilePropertyKey;
 import com.sss.engine.core.tags.ProfilePropertySerializableField;
+import com.sss.engine.core.tags.ProfilePropertyType;
 
-public interface ProfileProperty extends Serializable {
+public interface ProfileProperty extends Serializable, Comparable<ProfileProperty> {
 
 	default String toJSON() {
 		// TODO Auto-generated method stub
@@ -26,6 +28,14 @@ public interface ProfileProperty extends Serializable {
 		} catch (JsonProcessingException e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	default String getAlias() {
+		Class<? extends ProfileProperty> clazz = getProperty().getClass();
+		ProfilePropertyAlias aliasAnn = clazz.getDeclaredAnnotation(ProfilePropertyAlias.class);
+		ProfilePropertyType type = aliasAnn.name();
+		String alias = type.getValue();
+		return alias;
 	}
 
 	default String getProfilePropertyKey() {

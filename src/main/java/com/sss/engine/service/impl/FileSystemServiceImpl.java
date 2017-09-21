@@ -7,10 +7,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import com.sss.engine.core.exception.InvalidDirectoryPathException;
 import com.sss.engine.dto.FileWrapper;
@@ -85,20 +87,16 @@ public class FileSystemServiceImpl implements FileSystemService {
 	public String getFileNameFromPath(String path) {
 		// TODO Auto-generated method stub
 		String fileName = getLastSegmentFromPath(path);
-		fileName = fileName.split("\\.")[0];
-		return fileName;
+		String name = fileName.substring(0, fileName.lastIndexOf('.'));
+		return name;
 	}
 
 	@Override
 	public String getFileExtensionFromPath(String path) {
 		// TODO Auto-generated method stub
 		String fileName = getLastSegmentFromPath(path);
-		String tokens[] = fileName.split("\\.");
-		if (tokens.length == 2) {
-			return tokens[1];
-		} else {
-			return null;
-		}
+		String fileExt = fileName.substring(fileName.lastIndexOf('.') + 1);
+		return fileExt;
 	}
 
 }

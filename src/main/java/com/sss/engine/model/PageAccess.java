@@ -6,13 +6,13 @@ import com.sss.engine.core.tags.ProfilePropertyType;
 import com.sss.engine.core.tags.ProfilePropertySerializableField;
 
 @ProfilePropertyAlias(name = ProfilePropertyType.PAGE_ACCESS)
-public class PageAccess implements ProfileProperty,Comparable<PageAccess>{
+public class PageAccess implements ProfileProperty/*,Comparable<PageAccess>*/{
 
-	@Override
+	/*@Override
 	public int compareTo(PageAccess o) {
 		// TODO Auto-generated method stub
 		return this.apexPage.compareTo(o.getApexPage());
-	}
+	}*/
 	@ProfilePropertyKey
 	private String apexPage;
 	@ProfilePropertySerializableField
@@ -57,6 +57,11 @@ public class PageAccess implements ProfileProperty,Comparable<PageAccess>{
 		} else if (!apexPage.equals(other.apexPage))
 			return false;
 		return true;
+	}
+	@Override
+	public int compareTo(ProfileProperty o) {
+		// TODO Auto-generated method stub
+		return this.apexPage.compareTo(o.getProfilePropertyKey());
 	}
 	
 }

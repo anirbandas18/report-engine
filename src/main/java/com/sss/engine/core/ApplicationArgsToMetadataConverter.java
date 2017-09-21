@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import com.sss.engine.dto.ApplicationCLIOptions;
 import com.sss.engine.dto.ReportMetadata;
@@ -47,12 +46,20 @@ public class ApplicationArgsToMetadataConverter implements Converter<Application
 				filters.add(x.toLowerCase());
 			}
 		}
+		List<String> s = source.getOptionValues(options.getSupplements());
+		Set<String> supplements = new LinkedHashSet<>();
+		if(s != null) {
+			for(String x : s) {
+				supplements.add(x.toLowerCase());
+			}
+		}
 		String prefix = fileSys.getLastSegmentFromPath(input);
 		ReportMetadata target = new ReportMetadata();
 		target.setPropertyFilters(filters);
 		target.setInputLocation(input);
 		target.setOutputLocation(output);
 		target.setReportNamePrefix(prefix);
+		target.setSupplementaryProperties(supplements);
 		return target;
 	}
 

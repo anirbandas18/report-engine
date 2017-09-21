@@ -6,13 +6,13 @@ import com.sss.engine.core.tags.ProfilePropertyType;
 import com.sss.engine.core.tags.ProfilePropertySerializableField;
 
 @ProfilePropertyAlias(name = ProfilePropertyType.USER_PERMISSION)
-public class UserPermission implements ProfileProperty, Comparable<UserPermission>{
+public class UserPermission implements ProfileProperty/*, Comparable<UserPermission>*/{
 
-	@Override
+	/*@Override
 	public int compareTo(UserPermission o) {
 		// TODO Auto-generated method stub
 		return this.name.compareTo(o.getName());
-	}
+	}*/
 	@ProfilePropertyKey
 	private String name;
 	@ProfilePropertySerializableField
@@ -57,6 +57,11 @@ public class UserPermission implements ProfileProperty, Comparable<UserPermissio
 		} else if (!name.equals(other.name))
 			return false;
 		return true;
+	}
+	@Override
+	public int compareTo(ProfileProperty o) {
+		// TODO Auto-generated method stub
+		return this.name.compareTo(o.getProfilePropertyKey());
 	}
 
 }

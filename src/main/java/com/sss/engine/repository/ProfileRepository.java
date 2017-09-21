@@ -15,6 +15,8 @@ public interface ProfileRepository {
 	
 	public Profile fetchProfile(String name);
 	
+	public ProfileProperty fetchValueOfProfilePropertyFromProfile(String profileName, ProfileProperty key);
+	
 	public List<String> fetchAllProfileNames();
 	
 	public List<ProfileProperty> fetchAllDistinctProfilePropertiesOfType(ProfilePropertyType type);

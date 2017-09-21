@@ -6,17 +6,17 @@ import com.sss.engine.core.tags.ProfilePropertyType;
 import com.sss.engine.core.tags.ProfilePropertySerializableField;
 
 @ProfilePropertyAlias(name = ProfilePropertyType.CLASS_ACCESS)
-public class ClassAccess  implements ProfileProperty, Comparable<ClassAccess> {
+public class ClassAccess  implements ProfileProperty{
 	@ProfilePropertyKey
 	private String apexClass;
 	@ProfilePropertySerializableField
 	private Boolean enabled;
 	
-	@Override
+	/*@Override
 	public int compareTo(ClassAccess o) {
 		// TODO Auto-generated method stub
 		return this.apexClass.compareTo(o.getApexClass());
-	}
+	}*/
 
 	public String getApexClass() {
 		return apexClass;
@@ -63,6 +63,12 @@ public class ClassAccess  implements ProfileProperty, Comparable<ClassAccess> {
 		} else if (!apexClass.equals(other.apexClass))
 			return false;
 		return true;
+	}
+
+	@Override
+	public int compareTo(ProfileProperty o) {
+		// TODO Auto-generated method stub
+		return this.apexClass.compareTo(o.getProfilePropertyKey());
 	}
 
 }

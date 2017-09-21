@@ -1,8 +1,3 @@
-/target/
-/bin/
 /b/
-/input-exception/
-/input-single/
-/reports/
 /DiffUtils/
-/report-engine.zip
+/target/

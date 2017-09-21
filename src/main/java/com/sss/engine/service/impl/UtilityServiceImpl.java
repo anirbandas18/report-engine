@@ -1,12 +1,14 @@
 package com.sss.engine.service.impl;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.nio.file.FileSystems;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -14,9 +16,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.Future;
-import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.xml.stream.XMLInputFactory;
@@ -24,8 +26,10 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import com.sss.engine.core.tags.ProfilePropertyAlias;
 import com.sss.engine.core.tags.ProfilePropertyKey;
@@ -61,7 +65,6 @@ public class UtilityServiceImpl implements UtilityService {
 	@Value(".csv")
 	private String csvFileExtension;
 	
-	
 	@Override
 	public Class<? extends ProfileProperty> searchClassByTag(List<Class<? extends ProfileProperty>> list, String tagName) {
 		// TODO Auto-generated method stub
@@ -87,7 +90,7 @@ public class UtilityServiceImpl implements UtilityService {
 		return item;
 	}
 	
-	private Class<?> validateTag(Set<String> filters, String tagName) {
+	private Class<?> validateTag(Set<String> processableTags, String tagName) {
 		tagName = tagName.toLowerCase();
 		String parentModelClassName = parentModelClass.getSimpleName();
 		if(tagName.equalsIgnoreCase(parentModelClassName)) {
@@ -95,7 +98,7 @@ public class UtilityServiceImpl implements UtilityService {
 		} else if(skipppedEntities.contains(tagName)) {
 			return null;
 		} else {
-			if(filters.contains(tagName) || filters.isEmpty()) {
+			if(processableTags.contains(tagName) || processableTags.isEmpty()) {
 				Class<? extends ProfileProperty> clazz = searchClassByTag(applicationModelClasses, tagName);
 				return clazz;
 			} else { 
@@ -105,7 +108,7 @@ public class UtilityServiceImpl implements UtilityService {
 	}
 
 	@SuppressWarnings("unused")
-	public Future<Set<String>> parseXML(String fileLocation, Set<String> filters) throws Exception  {
+	public Future<Set<String>> parseXML(String fileLocation, Set<String> processableTags) throws Exception  {
 		String tagName = "";
 		String tagContent = "";
 		boolean currentTagBelongsToModel = false;
@@ -121,7 +124,7 @@ public class UtilityServiceImpl implements UtilityService {
 			switch (xmlReader.getEventType()) {
 			case XMLStreamReader.START_ELEMENT:
 				tagName = xmlReader.getLocalName();
-				Class<?> tagClass = validateTag(filters, tagName);
+				Class<?> tagClass = validateTag(processableTags, tagName);
 				if(tagClass != null && tagClass.equals(parentModelClass)) {
 					String fileName = fileSys.getFileNameFromPath(fileLocation);
 					List<Field> fields = new ArrayList<>(Arrays.asList(parentModelClass.getDeclaredFields()));
@@ -162,7 +165,7 @@ public class UtilityServiceImpl implements UtilityService {
 				break;
 			case XMLStreamReader.END_ELEMENT:
 				tagName = xmlReader.getLocalName();
-				tagClass = validateTag(filters, tagName);
+				tagClass = validateTag(processableTags, tagName);
 				if(tagClass != null && tagClass.equals(parentModelClass)) {
 					// save parentModel to cache
 					String processor = Thread.currentThread().getName();
@@ -196,7 +199,7 @@ public class UtilityServiceImpl implements UtilityService {
 	}
 
 	@Override
-	public Future<String> generateCSV(String csvDumpLocation, String fileNamePrefix, String alias) throws  IOException {
+	public Future<String> generateFilteredProfilePropertiesCSV(String csvDumpLocation, String fileNamePrefix, String alias) throws  IOException {
 		// TODO Auto-generated method stub
 		String processorName = Thread.currentThread().getName();
 		StringWriter sw = new StringWriter();
@@ -248,7 +251,7 @@ public class UtilityServiceImpl implements UtilityService {
 		System.out.println("{reportName : " + reportName + ", reportSize : " + report.length() + ", reportProcessor : " + processorName + "}");
 		return new AsyncResult<String>(reportLocation);
 	}
-
+	
 	private String createHeader(List<ProfileProperty> profileProperties) {
 		String header = csvReportHeaderPrefix + csvDelimitter;
 		for(ProfileProperty property : profileProperties) {
@@ -276,5 +279,65 @@ public class UtilityServiceImpl implements UtilityService {
 		ProfilePropertyType key = profilePropertyTypes.stream().filter(ppty -> ppty.getValue().equalsIgnoreCase(alias)).findAny().orElse(null);
 		return key;
 	}
+
+	@Override
+	public Future<List<String>> generateSupplementaryProfilePropertiesCSVs(String csvDumpLocation, String fileNamePrefix, String alias)
+			throws Exception {
+		// TODO Auto-generated method stub
+		List<ProfileProperty> allProperties = repository.fetchAllDistinctProfilePropertiesOfType(alias);
+		List<String> reportNames = new ArrayList<>();
+		Map<String,Future<String>> generationJobs = new TreeMap<>();
+		for(ProfileProperty property : allProperties) {
+			String fileNameDistinguisher = alias + "_" + property.getProfilePropertyKey();
+			String fileName = fileNamePrefix + "_" + fileNameDistinguisher + csvFileExtension;
+			FileWrapper fw = new FileWrapper();
+			fw.setName(fileName);
+			Future<String> job = generateIndividualCSV(csvDumpLocation, alias, fw, property);
+			generationJobs.put(fileNameDistinguisher, job);
+		}
+		for(String key : generationJobs.keySet()) {
+			Future<String> value = generationJobs.get(key);
+			String reportFileLocation = value.get();
+			if(StringUtils.hasText(reportFileLocation)) {
+				reportNames.add(fileSys.getFileNameFromPath(reportFileLocation));
+			}
+		}
+		return new AsyncResult<>(reportNames);
+	}
+	
+	@Async("applicationSubThreadPool")
+	public Future<String> generateIndividualCSV(String csvDumpLocation, String alias, FileWrapper fw, ProfileProperty property) throws IOException {
+		String processorName = Thread.currentThread().getName();
+		StringWriter sw = new StringWriter();
+		BufferedWriter bw = new BufferedWriter(sw);
+		String header = createHeader(Arrays.asList(property));
+		bw.write(header);
+		bw.newLine();
+		for(String profileName : repository.fetchAllProfileNames()) {
+			String line = profileName + csvDelimitter;
+			ProfileProperty item = repository.fetchValueOfProfilePropertyFromProfile(profileName, property);
+			if(item == null) {
+				Map<String,String> parentFields = property.formatSerilizableFields();
+				String blankTemplate = parentFields.size() > 1 ? "-:" : "-";
+				String blankCell = String.join("", Collections.nCopies(parentFields.size(), blankTemplate));
+				line = line + blankCell;
+			} else {
+				Map<String,String> childFields = item.formatSerilizableFields();
+				String formattedValues = formatDataCollection(childFields.values());
+				line = line + formattedValues;
+			}
+			bw.write(line);
+			bw.newLine();
+		}
+		bw.flush();
+		String report = sw.toString();
+		fw.setContent(report.getBytes());
+		String dirLocation = csvDumpLocation + FileSystems.getDefault().getSeparator() + alias;
+		String reportLocation = fileSys.writeFileToDirectory(dirLocation, fw);
+		String reportName = fileSys.getFileNameFromPath(reportLocation);
+		System.out.println("{reportName : " + reportName + ", reportSize : " + report.length() + ", reportProcessor : " + processorName + "}");
+		return new AsyncResult<String>(reportLocation);
+	}
+
 
 }

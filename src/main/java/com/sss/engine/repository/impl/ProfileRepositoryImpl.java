@@ -2,6 +2,7 @@ package com.sss.engine.repository.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -81,5 +82,29 @@ public class ProfileRepositoryImpl implements ProfileRepository {
 		List<ProfileProperty> distinctProperties = fetchAllDistinctProfilePropertiesOfType(type);
 		return distinctProperties;
 	}
+
+	@Override
+	public ProfileProperty fetchValueOfProfilePropertyFromProfile(String profileName, ProfileProperty key) {
+		// TODO Auto-generated method stub
+		Profile profile = profileCache.get(profileName);
+		String alias = key.getAlias();
+		//Class<? extends ProfileProperty> profilePropertyImplClass = key.getClass();
+		//ProfilePropertyAlias alias = profilePropertyImplClass.getDeclaredAnnotation(ProfilePropertyAlias.class);
+		List<ProfileProperty> profileProperties = profile.getProperties(service.getEnumForStringAlias(alias));
+		Collections.sort(profileProperties, profilePropertyComparator);
+		int index = Collections.binarySearch(profileProperties, key, profilePropertyComparator);
+		ProfileProperty item = index >= 0 ? profileProperties.get(index) : null;
+		return item;
+	}
+	
+	private Comparator<ProfileProperty> profilePropertyComparator = new Comparator<ProfileProperty>() {
+
+		@Override
+		public int compare(ProfileProperty o1, ProfileProperty o2) {
+			// TODO Auto-generated method stub
+			return o1.getProfilePropertyKey().compareTo(o2.getProfilePropertyKey());
+		}
+		
+	};
 
 }

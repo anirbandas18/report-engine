@@ -25,14 +25,7 @@ public class WorkerServiceImpl implements WorkerService {
 	private UtilityService util;
 	@Autowired
 	private FileSystemService fileSys;
-	/*@Autowired
-	private TaskExecutor xmlParser;
-	@Autowired
-	private TaskExecutor filteredReportsGenerator;
-	@Autowired
-	private TaskExecutor supplementaryReportsGenerator;*/
 	
-
 	@Override
 	public Set<String> parseAndLoadDataSet(ReportMetadata metadata) throws Exception {
 		List<String> fileLocations = fileSys.readFilesFromDirectory(metadata.getInputLocation());
@@ -55,7 +48,6 @@ public class WorkerServiceImpl implements WorkerService {
 				throw new RuntimeException(e);
 			}
 		});
-		//((ThreadPoolTaskExecutor)xmlParser).shutdown();
 		return modelProperties;
 	}
 
@@ -63,12 +55,13 @@ public class WorkerServiceImpl implements WorkerService {
 	public Integer processAndDumpDataSet(ReportMetadata metadata) throws Exception {
 		// TODO Auto-generated method stub
 		Integer noOfReports = 0;
-		List<String> reportLocations = new ArrayList<>();
-		List<String> filteredReportJobs = generateFilteredReports(metadata);
-		reportLocations.addAll(filteredReportJobs);
+		List<Future<String>> jobs = new ArrayList<>();
+		List<Future<String>> filteredReportJobs = generateFilteredReports(metadata);
+		jobs.addAll(filteredReportJobs);
 		//Future<List<String>> supplementaryReportJobs = generateSupplementaryReports(metadata);
 		//reportLocations.addAll(supplementaryReportJobs.get());
-		for(String reportFileLocation : reportLocations) {
+		for(Future<String> job : jobs) {
+			String reportFileLocation = job.get();
 			if(StringUtils.hasText(reportFileLocation)) {
 				noOfReports++;
 			}
@@ -76,14 +69,12 @@ public class WorkerServiceImpl implements WorkerService {
 		return noOfReports;
 	}
 	
-	private List<String> generateFilteredReports(ReportMetadata metadata) throws Exception {
-		List<String> filteredReportLocations = new ArrayList<>();
+	private List<Future<String>> generateFilteredReports(ReportMetadata metadata) throws Exception {
+		List<Future<String>> filteredReportLocations = new ArrayList<>();
 		for(String alias : metadata.getPropertyFilters()) {
 			Future<String> job = util.generateFilteredProfilePropertiesCSV(metadata.getOutputLocation(), metadata.getReportNamePrefix(), alias);
-			String reportLocation = job.get();
-			filteredReportLocations.add(reportLocation);
+			filteredReportLocations.add(job);
 		}
-		//((ThreadPoolTaskExecutor)filteredReportsGenerator).shutdown();
 		return filteredReportLocations;
 	}
 	
@@ -95,7 +86,6 @@ public class WorkerServiceImpl implements WorkerService {
 			List<String> reportlocations = job.get();
 			supplementaryReportsLocation.addAll(reportlocations);
 		}
-		//((ThreadPoolTaskExecutor)supplementaryReportsGenerator).shutdown();
 		return new AsyncResult<>(supplementaryReportsLocation);
 	}
 

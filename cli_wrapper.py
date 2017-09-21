@@ -22,7 +22,7 @@ def build_jar():
     else:
         return None
     
-def execute_jar(should_run,app_cmd_args):
+def execute_jar(app_cmd_args):
     should_run = input("\nRun " + JAR_NAME + " file from target (Y/N) ? ")
     # check if jar is to be run 
     if len(should_run) != 0 and (should_run[0] == 'Y' or should_run[0] == 'y'):     
@@ -69,7 +69,7 @@ def main():
         print("\nMaven exit code: " + str(mvn_exit_code)) 
         if mvn_exit_code == 0 or mvn_exit_code == None:
             jar_exit_code = execute_jar(app_cmd_args)
-            print("\nJaava exit code: " + str(jar_exit_code))
+            print("\nJava exit code: " + str(jar_exit_code))
     print('\nReport engine terminated!')
 
 if __name__ == '__main__':

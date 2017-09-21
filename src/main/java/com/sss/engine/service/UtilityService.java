@@ -19,7 +19,7 @@ public interface UtilityService {
 	@Async/*(value = "xmlParser")*/
 	public Future<Set<String>> parseXML(String xmlFileLocation, Set<String> processableTags) throws Exception;
 	
-	@Async/*(value = "filteredReportsGenerator")*/
+	@Async
 	public Future<String> generateFilteredProfilePropertiesCSV(String csvDumpLocation, String fileNamePrefix, String alias) throws IOException;
 
 	@Async(value = "applicationSubThreadPool")

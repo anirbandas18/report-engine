@@ -8,10 +8,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -66,8 +64,8 @@ public class WorkerServiceImpl implements WorkerService {
 		// TODO Auto-generated method stub
 		Integer noOfReports = 0;
 		List<String> reportLocations = new ArrayList<>();
-		Future<List<String>> filteredReportJobs = generateFilteredReports(metadata);
-		reportLocations.addAll(filteredReportJobs.get());
+		List<String> filteredReportJobs = generateFilteredReports(metadata);
+		reportLocations.addAll(filteredReportJobs);
 		//Future<List<String>> supplementaryReportJobs = generateSupplementaryReports(metadata);
 		//reportLocations.addAll(supplementaryReportJobs.get());
 		for(String reportFileLocation : reportLocations) {
@@ -78,8 +76,7 @@ public class WorkerServiceImpl implements WorkerService {
 		return noOfReports;
 	}
 	
-	@Async
-	public Future<List<String>> generateFilteredReports(ReportMetadata metadata) throws Exception {
+	private List<String> generateFilteredReports(ReportMetadata metadata) throws Exception {
 		List<String> filteredReportLocations = new ArrayList<>();
 		for(String alias : metadata.getPropertyFilters()) {
 			Future<String> job = util.generateFilteredProfilePropertiesCSV(metadata.getOutputLocation(), metadata.getReportNamePrefix(), alias);
@@ -87,7 +84,7 @@ public class WorkerServiceImpl implements WorkerService {
 			filteredReportLocations.add(reportLocation);
 		}
 		//((ThreadPoolTaskExecutor)filteredReportsGenerator).shutdown();
-		return new AsyncResult<>(filteredReportLocations);
+		return filteredReportLocations;
 	}
 	
 	@Async("applicationSubThreadPool")

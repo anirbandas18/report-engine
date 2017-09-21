@@ -53,9 +53,8 @@ public class ReportEngineConfiguration {
 		return new ConcurrentSkipListMap<>();
 	}
 	
-	@Bean/*({"xmlParser","processor","filteredReportsGenerator","supplementaryReportsGenerator"})*/
-	//@Scope(scopeName = "prototype")
-    public TaskExecutor taskExecutor() {
+	@Bean
+	public TaskExecutor taskExecutor() {
 		int noOfProcessors = Runtime.getRuntime().availableProcessors();
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setThreadNamePrefix("applicationThreadPool-");

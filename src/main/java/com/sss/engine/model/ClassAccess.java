@@ -12,12 +12,6 @@ public class ClassAccess  implements ProfileProperty{
 	@ProfilePropertySerializableField
 	private Boolean enabled;
 	
-	/*@Override
-	public int compareTo(ClassAccess o) {
-		// TODO Auto-generated method stub
-		return this.apexClass.compareTo(o.getApexClass());
-	}*/
-
 	public String getApexClass() {
 		return apexClass;
 	}
@@ -68,7 +62,7 @@ public class ClassAccess  implements ProfileProperty{
 	@Override
 	public int compareTo(ProfileProperty o) {
 		// TODO Auto-generated method stub
-		return this.apexClass.compareTo(o.getProfilePropertyKey());
+		return this.apexClass.compareTo(o.getProfilePropertyKey().toString());
 	}
 
 }

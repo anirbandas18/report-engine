@@ -56,7 +56,7 @@ public class TabVisibility implements ProfileProperty/*, Comparable<TabVisibilit
 	@Override
 	public int compareTo(ProfileProperty o) {
 		// TODO Auto-generated method stub
-		return this.tab.compareTo(o.getProfilePropertyKey().toString());
+		return this.tab.compareTo(o.getProfilePropertyKey());
 	}
 	
 }

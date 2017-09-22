@@ -56,7 +56,7 @@ public class PageAccess implements ProfileProperty/*,Comparable<PageAccess>*/{
 	@Override
 	public int compareTo(ProfileProperty o) {
 		// TODO Auto-generated method stub
-		return this.apexPage.compareTo(o.getProfilePropertyKey().toString());
+		return this.apexPage.compareTo(o.getProfilePropertyKey());
 	}
 	
 }

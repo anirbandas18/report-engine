@@ -38,17 +38,17 @@ public interface ProfileProperty extends Serializable, Comparable<ProfilePropert
 		return alias;
 	}
 
-	default Object getProfilePropertyKey() {
+	default String getProfilePropertyKey() {
 		Class<? extends ProfileProperty> clazz = getProperty().getClass();
 		List<Field> fields = new ArrayList<>(Arrays.asList(clazz.getDeclaredFields()));
 		Field key = fields.stream().filter(f -> f.isAnnotationPresent(ProfilePropertyKey.class)).findAny().orElse(null);
 		Field sub = fields.stream().filter(f -> (!f.isAnnotationPresent(ProfilePropertyKey.class)
 				&& !f.isAnnotationPresent(ProfilePropertySerializableField.class))).findAny().orElse(null);
-		Object value = null;
+		String value = "";
 		key.setAccessible(true);
 		key = key != null ? key : sub;
 		try {
-			value = key.get(getProperty());
+			value = key.get(getProperty()).toString();
 		} catch (IllegalArgumentException | IllegalAccessException e) {
 			throw new RuntimeException(e);
 		}

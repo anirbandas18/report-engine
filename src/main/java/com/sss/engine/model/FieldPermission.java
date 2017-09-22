@@ -65,7 +65,7 @@ public class FieldPermission implements ProfileProperty/*, Comparable<FieldPermi
 	@Override
 	public int compareTo(ProfileProperty o) {
 		// TODO Auto-generated method stub
-		return this.field.compareTo(o.getProfilePropertyKey().toString());
+		return this.field.compareTo(o.getProfilePropertyKey());
 	}
 	
 }

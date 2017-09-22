@@ -64,7 +64,7 @@ public class RecordTypeVisibility implements ProfileProperty/*, Comparable<Recor
 	@Override
 	public int compareTo(ProfileProperty o) {
 		// TODO Auto-generated method stub
-		return this.recordType.compareTo(o.getProfilePropertyKey().toString());
+		return this.recordType.compareTo(o.getProfilePropertyKey());
 	}
 	
 }

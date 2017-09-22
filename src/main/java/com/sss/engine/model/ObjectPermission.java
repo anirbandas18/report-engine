@@ -96,7 +96,7 @@ public class ObjectPermission implements ProfileProperty/*, Comparable<ObjectPer
 	@Override
 	public int compareTo(ProfileProperty o) {
 		// TODO Auto-generated method stub
-		return this.object.compareTo(o.getProfilePropertyKey().toString());
+		return this.object.compareTo(o.getProfilePropertyKey());
 	}
 	
 }

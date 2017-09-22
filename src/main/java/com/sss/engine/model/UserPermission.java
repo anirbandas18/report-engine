@@ -56,7 +56,7 @@ public class UserPermission implements ProfileProperty/*, Comparable<UserPermiss
 	@Override
 	public int compareTo(ProfileProperty o) {
 		// TODO Auto-generated method stub
-		return this.name.compareTo(o.getProfilePropertyKey().toString());
+		return this.name.compareTo(o.getProfilePropertyKey());
 	}
 
 }

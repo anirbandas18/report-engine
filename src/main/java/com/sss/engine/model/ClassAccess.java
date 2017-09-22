@@ -62,7 +62,7 @@ public class ClassAccess  implements ProfileProperty{
 	@Override
 	public int compareTo(ProfileProperty o) {
 		// TODO Auto-generated method stub
-		return this.apexClass.compareTo(o.getProfilePropertyKey().toString());
+		return this.apexClass.compareTo(o.getProfilePropertyKey());
 	}
 
 }

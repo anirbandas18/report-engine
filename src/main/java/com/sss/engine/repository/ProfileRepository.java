@@ -22,5 +22,10 @@ public interface ProfileRepository {
 	public List<ProfileProperty> fetchAllDistinctProfilePropertiesOfType(ProfilePropertyType type);
 
 	public List<ProfileProperty> fetchAllDistinctProfilePropertiesOfType(String alias);
+	
+	/*public List<ProfileProperty> fetchAllSubPropertiesOfProfilePropertyType(ProfilePropertyType type);
+	
+	public List<ProfileProperty> fetchAllSubPropertiesOfProfilePropertyType(String alias);*/
+	
 
 }

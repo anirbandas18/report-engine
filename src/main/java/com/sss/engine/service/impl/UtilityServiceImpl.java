@@ -285,14 +285,31 @@ public class UtilityServiceImpl implements UtilityService {
 	}
 
 	@Override
-	public Future<List<String>> generateSupplementaryProfilePropertiesCSVs(String csvDumpLocation, String fileNamePrefix, String alias)
+	public Future<List<String>> generateSupplementaryProfilePropertiesCSVs(String csvDumpLocation, String fileNamePrefix, String alias) // alias = tagname
 			throws Exception {
 		// TODO Auto-generated method stub
 		List<ProfileProperty> allProperties = repository.fetchAllDistinctProfilePropertiesOfType(alias);
 		List<String> reportNames = new ArrayList<>();
 		Map<String,Future<String>> generationJobs = new TreeMap<>();
+		Map<String,List<ProfileProperty>> subPropertiesOfPropertyType = new TreeMap<>();
 		for(ProfileProperty property : allProperties) {
-			String fileNameDistinguisher = alias + "_" + property.getProfilePropertyKey();
+			
+			Object profilePropertyKey = property.getProfilePropertyKey();
+			/*if(profilePropertyKey instanceof Integer) {
+				
+			} else if(profilePropertyKey instanceof String) {
+				
+			}
+			// List<String> tokens = new ArrayList<>(Arrays.asList(profilePropertyKey.split("\\.")));
+			// String key = tokens.get(0);
+			List<ProfileProperty> subProperties = subPropertiesOfPropertyType.get(key);
+			if(key == null) {
+				subProperties = new ArrayList<>();
+			}
+			
+			//subProperties.add(e)
+*/			
+			String fileNameDistinguisher = alias + "_" + profilePropertyKey;
 			String fileName = fileNamePrefix + "_" + fileNameDistinguisher + csvFileExtension;
 			FileWrapper fw = new FileWrapper();
 			fw.setName(fileName);

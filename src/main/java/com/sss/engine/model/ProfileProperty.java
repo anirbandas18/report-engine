@@ -38,22 +38,38 @@ public interface ProfileProperty extends Serializable, Comparable<ProfilePropert
 		return alias;
 	}
 
-	default String getProfilePropertyKey() {
+	default Object getProfilePropertyKey() {
 		Class<? extends ProfileProperty> clazz = getProperty().getClass();
 		List<Field> fields = new ArrayList<>(Arrays.asList(clazz.getDeclaredFields()));
 		Field key = fields.stream().filter(f -> f.isAnnotationPresent(ProfilePropertyKey.class)).findAny().orElse(null);
 		Field sub = fields.stream().filter(f -> (!f.isAnnotationPresent(ProfilePropertyKey.class)
 				&& !f.isAnnotationPresent(ProfilePropertySerializableField.class))).findAny().orElse(null);
-		String value = "";
+		Object value = null;
 		key.setAccessible(true);
 		key = key != null ? key : sub;
 		try {
-			value = key.get(getProperty()).toString();
+			value = key.get(getProperty());
 		} catch (IllegalArgumentException | IllegalAccessException e) {
 			throw new RuntimeException(e);
 		}
 		key.setAccessible(false);
 		return value;
+	}
+	
+	default void setProfilePropertyKey(Object value) {
+		Class<? extends ProfileProperty> clazz = getProperty().getClass();
+		List<Field> fields = new ArrayList<>(Arrays.asList(clazz.getDeclaredFields()));
+		Field key = fields.stream().filter(f -> f.isAnnotationPresent(ProfilePropertyKey.class)).findAny().orElse(null);
+		Field sub = fields.stream().filter(f -> (!f.isAnnotationPresent(ProfilePropertyKey.class)
+				&& !f.isAnnotationPresent(ProfilePropertySerializableField.class))).findAny().orElse(null);
+		key.setAccessible(true);
+		key = key != null ? key : sub;
+		try {
+			key.set(getProperty(), value);
+		} catch (IllegalArgumentException | IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
+		key.setAccessible(false);
 	}
 
 	default Map<String,String> formatSerilizableFields() {

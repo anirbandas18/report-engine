@@ -88,8 +88,6 @@ public class ProfileRepositoryImpl implements ProfileRepository {
 		// TODO Auto-generated method stub
 		Profile profile = profileCache.get(profileName);
 		String alias = key.getAlias();
-		//Class<? extends ProfileProperty> profilePropertyImplClass = key.getClass();
-		//ProfilePropertyAlias alias = profilePropertyImplClass.getDeclaredAnnotation(ProfilePropertyAlias.class);
 		List<ProfileProperty> profileProperties = profile.getProperties(service.getEnumForStringAlias(alias));
 		Collections.sort(profileProperties, profilePropertyComparator);
 		int index = Collections.binarySearch(profileProperties, key, profilePropertyComparator);

@@ -270,6 +270,9 @@ public class UtilityServiceImpl implements UtilityService {
 		String formatted = data.toString();
 		formatted = formatted.replaceAll(",\\s", "");// :
 		formatted = formatted.substring(1, formatted.length() - 1);
+		if(data.size() > 1) {
+			formatted = "'" + formatted + "'";
+		}
 		return formatted;
 	}
 	

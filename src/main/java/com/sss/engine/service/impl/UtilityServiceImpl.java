@@ -174,7 +174,9 @@ public class UtilityServiceImpl implements UtilityService {
 				} else if(tagClass != null) {
 					Method addProperty = parentModelClass.getDeclaredMethod("addProperty", ProfilePropertyType.class, ProfileProperty.class);
 					ProfilePropertyType key = getEnumForStringAlias(tagName.toLowerCase());
-					addProperty.invoke(parentModel, key, (ProfileProperty) currentModelProperty);
+					if(key != null) {
+						addProperty.invoke(parentModel, key, (ProfileProperty) currentModelProperty);
+					}
 				} else {
 					currentTagBelongsToModel = false;
 				}
@@ -218,7 +220,7 @@ public class UtilityServiceImpl implements UtilityService {
 			String line = profileName + csvDelimitter;
 			for(ProfileProperty parent : allProperties) {
 				Map<String,String> parentFields = parent.formatSerilizableFields();
-				String blankTemplate = parentFields.size() > 1 ? "-:" : "-";
+				String blankTemplate = "-";// parentFields.size() > 1 ? "-:" : "-";
 				String blankCell = String.join("", Collections.nCopies(parentFields.size(), blankTemplate));
 				if(count < specificProperties.size()) {
 					ProfileProperty child = specificProperties.get(count);
@@ -266,7 +268,7 @@ public class UtilityServiceImpl implements UtilityService {
 	
 	private String formatDataCollection(Collection<String> data) {
 		String formatted = data.toString();
-		formatted = formatted.replaceAll(",\\s", ":");
+		formatted = formatted.replaceAll(",\\s", "");// :
 		formatted = formatted.substring(1, formatted.length() - 1);
 		return formatted;
 	}
@@ -317,7 +319,7 @@ public class UtilityServiceImpl implements UtilityService {
 			ProfileProperty item = repository.fetchValueOfProfilePropertyFromProfile(profileName, property);
 			if(item == null) {
 				Map<String,String> parentFields = property.formatSerilizableFields();
-				String blankTemplate = parentFields.size() > 1 ? "-:" : "-";
+				String blankTemplate = "-";// parentFields.size() > 1 ? "-:" : "-";
 				String blankCell = String.join("", Collections.nCopies(parentFields.size(), blankTemplate));
 				line = line + blankCell;
 			} else {

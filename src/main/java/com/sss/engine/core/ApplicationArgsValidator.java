@@ -2,6 +2,8 @@ package com.sss.engine.core;
 
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,8 @@ public class ApplicationArgsValidator implements Validator {
 
 	@Autowired
 	private ApplicationCLIOptions options;
+	@Resource(name = "profilePropertyAliases")
+	private List<String> profilePropertyAliases;
 	
 	private ApplicationArguments args;
 	
@@ -24,6 +28,16 @@ public class ApplicationArgsValidator implements Validator {
 		return ApplicationArguments.class.equals(clazz);
 	}
 
+	private Boolean validateAliases(String key, Errors errors) {
+		List<String> userDefined = args.getOptionValues(key);
+		Boolean status = true;
+		if(userDefined != null && !userDefined.isEmpty()) {
+			status = profilePropertyAliases.containsAll(userDefined);
+			errors.reject("invalid." + key, key + " name(s) doesn't match defined mappings for tags representing profile properties");
+		}
+		return status;
+	}
+	
 	private Boolean validateInput(Errors errors) {
 		String optionName = options.getInput();
 		List<String> values = args.getOptionValues(optionName);
@@ -65,6 +79,12 @@ public class ApplicationArgsValidator implements Validator {
 			if(!validateOutput(errors)) {
 				// log error
 			} 
+			if(!validateAliases(options.getFilters(), errors)) {
+				// log error
+			}
+			if(!validateAliases(options.getSupplements(), errors)) {
+				// log error
+			}
 		} 
 	}
 

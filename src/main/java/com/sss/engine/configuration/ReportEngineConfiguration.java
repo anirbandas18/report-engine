@@ -1,6 +1,7 @@
 package com.sss.engine.configuration;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.stream.Collectors;
 
 import javax.management.Query;
 import javax.xml.stream.XMLInputFactory;
@@ -98,6 +100,13 @@ public class ReportEngineConfiguration {
 	@Bean
 	public Query query() {
 		return  new Query();
+	}
+	
+	@Bean
+	public List<String> profilePropertyAliases() {
+		List<ProfilePropertyType> profileProperties = new ArrayList<>(Arrays.asList(ProfilePropertyType.values()));
+		List<String> aliases = profileProperties.stream().map(p -> p.getValue()).collect(Collectors.toList());
+		return aliases;
 	}
 	
 }

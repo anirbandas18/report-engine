@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -39,6 +40,7 @@ public class FileSystemServiceImpl implements FileSystemService {
 					}
 				}
 			}
+			Collections.sort(fileLocations);
 			return fileLocations;
 		} else {
 			throw new InvalidDirectoryPathException(dirLocation);

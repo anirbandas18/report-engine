@@ -43,7 +43,7 @@ import com.sss.engine.service.UtilityService;
 
 @Component
 public class UtilityServiceImpl implements UtilityService {
-	
+
 	@Autowired
 	private ProfileRepository repository;
 	@Autowired
@@ -54,7 +54,7 @@ public class UtilityServiceImpl implements UtilityService {
 	private List<Class<? extends ProfileProperty>> applicationModelClasses;
 	@Resource(name = "parentModelClass")
 	private Class<?> parentModelClass;
-	
+
 	@Value("#{'${application.model.skip.properties}'.split(',')}")
 	private List<String> skipppedEntities;
 	@Value("${csv.report.header.prefix}")
@@ -63,9 +63,17 @@ public class UtilityServiceImpl implements UtilityService {
 	private String csvDelimitter;
 	@Value(".csv")
 	private String csvFileExtension;
-	
+
+	private String getAliasNameOfProfilePropertyClass(Class<?> profilePropertyClass) {
+		ProfilePropertyAlias annotation = profilePropertyClass.getDeclaredAnnotation(ProfilePropertyAlias.class);
+		ProfilePropertyType type = annotation.name();
+		String aliasName = type.getValue();
+		return aliasName;
+	}
+
 	@Override
-	public Class<? extends ProfileProperty> searchClassByTag(List<Class<? extends ProfileProperty>> list, String tagName) {
+	public Class<? extends ProfileProperty> searchClassByTag(List<Class<? extends ProfileProperty>> list,
+			String tagName) {
 		// TODO Auto-generated method stub
 		Integer low = 0;
 		Integer high = list.size() - 1;
@@ -74,9 +82,7 @@ public class UtilityServiceImpl implements UtilityService {
 		while (low <= high) {
 			Integer mid = (high + low) / 2;
 			Class<? extends ProfileProperty> midElement = list.get(mid);
-			ProfilePropertyAlias annotation = midElement.getDeclaredAnnotation(ProfilePropertyAlias.class);
-			ProfilePropertyType type = annotation.name();
-			String aliasName = type.getValue();
+			String aliasName = getAliasNameOfProfilePropertyClass(midElement);
 			if (aliasName.compareTo(tagName) == 0) {
 				item = midElement;
 				break;
@@ -88,34 +94,40 @@ public class UtilityServiceImpl implements UtilityService {
 		}
 		return item;
 	}
-	
+
 	private Class<?> validateTag(Set<String> processableTags, String tagName) {
 		tagName = tagName.toLowerCase();
 		String parentModelClassName = parentModelClass.getSimpleName();
-		if(tagName.equalsIgnoreCase(parentModelClassName)) {
+		if (tagName.equalsIgnoreCase(parentModelClassName)) {
 			return parentModelClass;
-		} else if(skipppedEntities.contains(tagName)) {
+		} else if (skipppedEntities.contains(tagName)) {
 			return null;
 		} else {
-			if(processableTags.contains(tagName) || processableTags.isEmpty()) {
+			if (processableTags.contains(tagName) || processableTags.isEmpty()) {
 				Class<? extends ProfileProperty> clazz = searchClassByTag(applicationModelClasses, tagName);
 				return clazz;
-			} else { 
+			} else {
 				return null;
 			}
 		}
 	}
 
 	@SuppressWarnings("unused")
-	public Future<Set<String>> parseXML(String fileLocation, Set<String> processableTags) throws Exception  {
+	public Future<Set<String>> parseXML(String fileLocation, Set<String> processableTags) throws Exception {
 		String tagName = "";
 		String tagContent = "";
+		String currentMultiValueModelPropertyKey = "";
+		boolean isMultiValueModelProperty = false;
 		boolean currentTagBelongsToModel = false;
 		boolean chosenTag = false;
 		Object parentModel = null;// profile
 		Object currentModelProperty = null; // class implementing ProfileProperty
-		Class<?> currentModelPropertyClass = null;
+		Class<?> currentModelPropertyClass = null;// probable check here for any exception
 		Field currentModelPropertyField = null;
+
+		Set<Object> currentMultiValueModelProperties = new TreeSet<>();
+
+		Map<String, Set<String>> currentModelPropertyMultiValueField = new TreeMap<>();
 		InputStream stream = new FileInputStream(fileLocation);
 		XMLStreamReader xmlReader = xmlInputFactory.createXMLStreamReader(stream);
 		Set<String> modelProperties = new TreeSet<>();
@@ -124,33 +136,39 @@ public class UtilityServiceImpl implements UtilityService {
 			case XMLStreamReader.START_ELEMENT:
 				tagName = xmlReader.getLocalName();
 				Class<?> tagClass = validateTag(processableTags, tagName);
-				if(tagClass != null && tagClass.equals(parentModelClass)) {
+				if (tagClass != null && tagClass.equals(parentModelClass)) {
 					String fileName = fileSys.getFileNameFromPath(fileLocation);
 					List<Field> fields = new ArrayList<>(Arrays.asList(parentModelClass.getDeclaredFields()));
-					Field f = fields.stream().filter(x -> x.isAnnotationPresent(ProfilePropertyKey.class)).findAny().orElse(null);
+					Field f = fields.stream().filter(x -> x.isAnnotationPresent(ProfilePropertyKey.class)).findAny()
+							.orElse(null);
 					parentModel = parentModelClass.newInstance();
-					if(f != null) {
+					if (f != null) {
 						f.setAccessible(true);
 						f.set(parentModel, fileName);
 						f.setAccessible(false);
 					}
-				} else if(tagClass != null) {
+				} else if (tagClass != null) {
 					currentModelPropertyClass = tagClass;
 					currentModelProperty = currentModelPropertyClass.newInstance();
 					modelProperties.add(tagName.toLowerCase());
+					ProfilePropertyAlias alias = currentModelPropertyClass
+							.getDeclaredAnnotation(ProfilePropertyAlias.class);
+					isMultiValueModelProperty = alias.isMultiValueType();
 				} else {// check if tag is field of current model property
-					if(currentModelProperty != null) {
+					if (currentModelProperty != null) {
 						try {
 							currentModelPropertyField = currentModelPropertyClass.getDeclaredField(tagName);
 							currentTagBelongsToModel = true;
 						} catch (NoSuchFieldException e) {
 							// swallow exception for skipping tag
 							Boolean found = false;
-							List<Field> fields = new ArrayList<>(Arrays.asList(currentModelPropertyClass.getDeclaredFields()));
-							for(Field f : fields) {
-								if(f.isAnnotationPresent(ProfilePropertySerializableField.class)) {
-									ProfilePropertySerializableField ann = f.getDeclaredAnnotation(ProfilePropertySerializableField.class);
-									if(ann.name().equalsIgnoreCase(tagName)) {
+							List<Field> fields = new ArrayList<>(
+									Arrays.asList(currentModelPropertyClass.getDeclaredFields()));
+							for (Field f : fields) {
+								if (f.isAnnotationPresent(ProfilePropertySerializableField.class)) {
+									ProfilePropertySerializableField ann = f
+											.getDeclaredAnnotation(ProfilePropertySerializableField.class);
+									if (ann.name().equalsIgnoreCase(tagName)) {
 										found = true;
 										currentModelPropertyField = f;
 										break;
@@ -165,30 +183,97 @@ public class UtilityServiceImpl implements UtilityService {
 			case XMLStreamReader.END_ELEMENT:
 				tagName = xmlReader.getLocalName();
 				tagClass = validateTag(processableTags, tagName);
-				if(tagClass != null && tagClass.equals(parentModelClass)) {
+				if (tagClass != null && tagClass.equals(parentModelClass)) {
+					// new change below
+					if (!currentMultiValueModelProperties.isEmpty()) {
+						Object item = currentMultiValueModelProperties.iterator().next();
+						ProfilePropertyAlias aliasAnn = item.getClass()
+								.getDeclaredAnnotation(ProfilePropertyAlias.class);
+						ProfilePropertyType key = aliasAnn.name();
+						Method addProperties = parentModelClass.getDeclaredMethod("addProperties",
+								ProfilePropertyType.class, Collection.class);
+						addProperties.invoke(parentModel, key, currentMultiValueModelProperties);
+						currentMultiValueModelProperties.clear();
+					}
 					// save parentModel to cache
 					String processor = Thread.currentThread().getName();
 					Profile profile = (Profile) parentModel;
 					Boolean status = repository.storeProfile(profile.getName(), profile);
-					System.out.println("{profileName : " + profile.getName() + ", storeStatus : " + status + ", profileProcessor : " + processor + "}");
-				} else if(tagClass != null) {
-					Method addProperty = parentModelClass.getDeclaredMethod("addProperty", ProfilePropertyType.class, ProfileProperty.class);
-					ProfilePropertyType key = getEnumForStringAlias(tagName.toLowerCase());
-					if(key != null) {
-						addProperty.invoke(parentModel, key, (ProfileProperty) currentModelProperty);
+					System.out.println("{profileName : " + profile.getName() + ", storeStatus : " + status
+							+ ", profileProcessor : " + processor + "}");
+				} else if (tagClass != null) {
+					if (!isMultiValueModelProperty) {
+						if (!currentMultiValueModelProperties.isEmpty()) {
+							Object item = currentMultiValueModelProperties.iterator().next();
+							ProfilePropertyAlias aliasAnn = item.getClass()
+									.getDeclaredAnnotation(ProfilePropertyAlias.class);
+							ProfilePropertyType key = aliasAnn.name();
+							Method addProperties = parentModelClass.getDeclaredMethod("addProperties",
+									ProfilePropertyType.class, Collection.class);
+							addProperties.invoke(parentModel, key, currentMultiValueModelProperties);
+							currentMultiValueModelProperties.clear();
+						}
+						Method addProperty = parentModelClass.getDeclaredMethod("addProperty",
+								ProfilePropertyType.class, ProfileProperty.class);
+						ProfilePropertyType key = getEnumForStringAlias(tagName.toLowerCase());
+						if (key != null) {
+							addProperty.invoke(parentModel, key, (ProfileProperty) currentModelProperty);
+						}
+						// separate add method for multivaluemodelproperty
+					} else {
+						currentMultiValueModelProperties.add(currentModelProperty);
 					}
 				} else {
 					currentTagBelongsToModel = false;
+					ProfilePropertyAlias alias = currentModelPropertyClass
+							.getDeclaredAnnotation(ProfilePropertyAlias.class);
+					if (alias.isMultiValueType()) {
+						Set<String> multiValueFields = currentModelPropertyMultiValueField
+								.get(currentMultiValueModelPropertyKey);
+						// multiValueFields to currentModelProperty's appropriate field
+						List<Field> serializableFields = new ArrayList<>(
+								Arrays.asList(currentModelPropertyClass.getDeclaredFields()));
+						Field multiValueField = serializableFields.stream()
+								.filter(f -> f.isAnnotationPresent(ProfilePropertySerializableField.class)
+										&& f.getType() == Set.class)
+								.findAny().orElse(null);
+						if (multiValueField != null) {
+							multiValueField.setAccessible(true);
+							multiValueField.set(currentModelProperty, multiValueFields);
+							multiValueField.setAccessible(false);
+						}
+					}
 				}
 				break;
 			case XMLStreamReader.CHARACTERS:
 				tagContent = xmlReader.getText();
-				if(currentTagBelongsToModel) {
+				if (currentTagBelongsToModel) {
 					currentModelPropertyField.setAccessible(true);
-					if(currentModelPropertyField.getType() == Boolean.class) {
+					if (currentModelPropertyField.getType() == Boolean.class) {
 						currentModelPropertyField.set(currentModelProperty, Boolean.valueOf(tagContent));
+					} else if (currentModelPropertyField.getType() == Set.class) {
+						Set<String> multiValueFields = currentModelPropertyMultiValueField
+								.get(currentMultiValueModelPropertyKey);
+						multiValueFields.add(tagContent);
+						currentModelPropertyMultiValueField.put(currentMultiValueModelPropertyKey, multiValueFields);
 					} else {
-						currentModelPropertyField.set(currentModelProperty, tagContent);
+						ProfilePropertyAlias alias = currentModelPropertyClass
+								.getDeclaredAnnotation(ProfilePropertyAlias.class);
+						if (currentModelPropertyField.isAnnotationPresent(ProfilePropertyKey.class)) {
+							currentMultiValueModelPropertyKey = tagContent;
+							currentModelPropertyField.set(currentModelProperty, tagContent);
+							if (alias.isMultiValueType()) {
+								Set<String> multiValueFields = currentModelPropertyMultiValueField
+										.get(currentMultiValueModelPropertyKey);
+								if (multiValueFields == null) {
+									multiValueFields = new TreeSet<>();
+								}
+								currentModelPropertyMultiValueField.put(currentMultiValueModelPropertyKey,
+										multiValueFields);
+							}
+						} else {
+							currentModelPropertyField.set(currentModelProperty, tagContent);
+						}
 					}
 					currentModelPropertyField.setAccessible(false);
 				}
@@ -200,7 +285,8 @@ public class UtilityServiceImpl implements UtilityService {
 	}
 
 	@Override
-	public Future<String> generateFilteredProfilePropertiesCSV(String csvDumpLocation, String fileNamePrefix, String alias) throws  IOException {
+	public Future<String> generateFilteredProfilePropertiesCSV(String csvDumpLocation, String fileNamePrefix,
+			String alias) throws IOException {
 		// TODO Auto-generated method stub
 		String processorName = Thread.currentThread().getName();
 		StringWriter sw = new StringWriter();
@@ -209,23 +295,23 @@ public class UtilityServiceImpl implements UtilityService {
 		String header = createHeader(allProperties);
 		bw.write(header);
 		bw.newLine();
-		
+
 		// logic to write report body
-		
-		for(String profileName : repository.fetchAllProfileNames()) {
+
+		for (String profileName : repository.fetchAllProfileNames()) {
 			Profile profile = repository.fetchProfile(profileName);
 			ProfilePropertyType key = getEnumForStringAlias(alias);
 			List<ProfileProperty> specificProperties = profile.getProperties(key);
 			Integer count = 0;
 			String line = profileName + csvDelimitter;
-			for(ProfileProperty parent : allProperties) {
-				Map<String,String> parentFields = parent.formatSerilizableFields();
+			for (ProfileProperty parent : allProperties) {
+				Map<String, String> parentFields = parent.formatSerilizableFields();
 				String blankTemplate = "-";// parentFields.size() > 1 ? "-:" : "-";
 				String blankCell = String.join("", Collections.nCopies(parentFields.size(), blankTemplate));
-				if(count < specificProperties.size()) {
+				if (count < specificProperties.size()) {
 					ProfileProperty child = specificProperties.get(count);
-					if(parent.equals(child)) {
-						Map<String,String> childFields = child.formatSerilizableFields();
+					if (parent.equals(child)) {
+						Map<String, String> childFields = child.formatSerilizableFields();
 						String formattedValues = formatDataCollection(childFields.values());
 						line = line + formattedValues;
 						count++;
@@ -240,7 +326,7 @@ public class UtilityServiceImpl implements UtilityService {
 			bw.write(line);
 			bw.newLine();
 		}
-		
+
 		bw.flush();
 		String report = sw.toString();
 		String name = fileNamePrefix + "_" + alias + csvFileExtension;
@@ -249,14 +335,15 @@ public class UtilityServiceImpl implements UtilityService {
 		fw.setName(name);
 		String reportLocation = fileSys.writeFileToDirectory(csvDumpLocation, fw);
 		String reportName = fileSys.getFileNameFromPath(reportLocation);
-		System.out.println("{reportName : " + reportName + ", reportSize : " + report.length() + ", reportProcessor : " + processorName + "}");
+		System.out.println("{reportName : " + reportName + ", reportSize : " + report.length() + ", reportProcessor : "
+				+ processorName + "}");
 		return new AsyncResult<String>(reportLocation);
 	}
-	
+
 	private String createHeader(List<ProfileProperty> profileProperties) {
 		String header = csvReportHeaderPrefix + csvDelimitter;
-		for(ProfileProperty property : profileProperties) {
-			Map<String,String> serializableFields = property.formatSerilizableFields();
+		for (ProfileProperty property : profileProperties) {
+			Map<String, String> serializableFields = property.formatSerilizableFields();
 			String key = property.getProfilePropertyKey();
 			String formattedKeys = formatDataCollection(serializableFields.keySet());
 			String columnName = key + " - " + formattedKeys;
@@ -265,50 +352,37 @@ public class UtilityServiceImpl implements UtilityService {
 		header = header.substring(0, header.lastIndexOf(','));
 		return header;
 	}
-	
+
 	private String formatDataCollection(Collection<String> data) {
 		String formatted = data.toString();
 		formatted = formatted.replaceAll(",\\s", "");// :
 		formatted = formatted.substring(1, formatted.length() - 1);
-		if(data.size() > 1) {
+		if (data.size() > 1) {
 			formatted = "'" + formatted + "'";
 		}
 		return formatted;
 	}
-	
+
 	@Override
 	public ProfilePropertyType getEnumForStringAlias(final String alias) {
 		// TODO Auto-generated method stub
 		List<ProfilePropertyType> profilePropertyTypes = new ArrayList<>(Arrays.asList(ProfilePropertyType.values()));
-		ProfilePropertyType key = profilePropertyTypes.stream().filter(ppty -> ppty.getValue().equalsIgnoreCase(alias)).findAny().orElse(null);
+		ProfilePropertyType key = profilePropertyTypes.stream().filter(ppty -> ppty.getValue().equalsIgnoreCase(alias))
+				.findAny().orElse(null);
 		return key;
 	}
 
 	@Override
-	public Future<List<String>> generateSupplementaryProfilePropertiesCSVs(String csvDumpLocation, String fileNamePrefix, String alias) // alias = tagname
+	public Future<List<String>> generateSupplementaryProfilePropertiesCSVs(String csvDumpLocation,
+			String fileNamePrefix, String alias) // alias = tagname
 			throws Exception {
 		// TODO Auto-generated method stub
 		List<ProfileProperty> allProperties = repository.fetchAllDistinctProfilePropertiesOfType(alias);
 		List<String> reportNames = new ArrayList<>();
-		Map<String,Future<String>> generationJobs = new TreeMap<>();
-		Map<String,List<ProfileProperty>> subPropertiesOfPropertyType = new TreeMap<>();
-		for(ProfileProperty property : allProperties) {
-			
+		Map<String, Future<String>> generationJobs = new TreeMap<>();
+		Map<String, List<ProfileProperty>> subPropertiesOfPropertyType = new TreeMap<>();
+		for (ProfileProperty property : allProperties) {
 			Object profilePropertyKey = property.getProfilePropertyKey();
-			/*if(profilePropertyKey instanceof Integer) {
-				
-			} else if(profilePropertyKey instanceof String) {
-				
-			}
-			// List<String> tokens = new ArrayList<>(Arrays.asList(profilePropertyKey.split("\\.")));
-			// String key = tokens.get(0);
-			List<ProfileProperty> subProperties = subPropertiesOfPropertyType.get(key);
-			if(key == null) {
-				subProperties = new ArrayList<>();
-			}
-			
-			//subProperties.add(e)
-*/			
 			String fileNameDistinguisher = alias + "_" + profilePropertyKey;
 			String fileName = fileNamePrefix + "_" + fileNameDistinguisher + csvFileExtension;
 			FileWrapper fw = new FileWrapper();
@@ -316,34 +390,35 @@ public class UtilityServiceImpl implements UtilityService {
 			Future<String> job = generateIndividualCSV(csvDumpLocation, alias, fw, property);
 			generationJobs.put(fileNameDistinguisher, job);
 		}
-		for(String key : generationJobs.keySet()) {
+		for (String key : generationJobs.keySet()) {
 			Future<String> value = generationJobs.get(key);
 			String reportFileLocation = value.get();
-			if(StringUtils.hasText(reportFileLocation)) {
+			if (StringUtils.hasText(reportFileLocation)) {
 				reportNames.add(fileSys.getFileNameFromPath(reportFileLocation));
 			}
 		}
 		return new AsyncResult<>(reportNames);
 	}
-	
+
 	@Async("applicationSubThreadPool")
-	public Future<String> generateIndividualCSV(String csvDumpLocation, String alias, FileWrapper fw, ProfileProperty property) throws IOException {
+	public Future<String> generateIndividualCSV(String csvDumpLocation, String alias, FileWrapper fw,
+			ProfileProperty property) throws IOException {
 		String processorName = Thread.currentThread().getName();
 		StringWriter sw = new StringWriter();
 		BufferedWriter bw = new BufferedWriter(sw);
 		String header = createHeader(Arrays.asList(property));
 		bw.write(header);
 		bw.newLine();
-		for(String profileName : repository.fetchAllProfileNames()) {
+		for (String profileName : repository.fetchAllProfileNames()) {
 			String line = profileName + csvDelimitter;
 			ProfileProperty item = repository.fetchValueOfProfilePropertyFromProfile(profileName, property);
-			if(item == null) {
-				Map<String,String> parentFields = property.formatSerilizableFields();
+			if (item == null) {
+				Map<String, String> parentFields = property.formatSerilizableFields();
 				String blankTemplate = "-";// parentFields.size() > 1 ? "-:" : "-";
 				String blankCell = String.join("", Collections.nCopies(parentFields.size(), blankTemplate));
 				line = line + blankCell;
 			} else {
-				Map<String,String> childFields = item.formatSerilizableFields();
+				Map<String, String> childFields = item.formatSerilizableFields();
 				String formattedValues = formatDataCollection(childFields.values());
 				line = line + formattedValues;
 			}
@@ -356,9 +431,9 @@ public class UtilityServiceImpl implements UtilityService {
 		String dirLocation = csvDumpLocation + FileSystems.getDefault().getSeparator() + alias;
 		String reportLocation = fileSys.writeFileToDirectory(dirLocation, fw);
 		String reportName = fileSys.getFileNameFromPath(reportLocation);
-		System.out.println("{reportName : " + reportName + ", reportSize : " + report.length() + ", reportProcessor : " + processorName + "}");
+		System.out.println("{reportName : " + reportName + ", reportSize : " + report.length() + ", reportProcessor : "
+				+ processorName + "}");
 		return new AsyncResult<String>(reportLocation);
 	}
-
 
 }

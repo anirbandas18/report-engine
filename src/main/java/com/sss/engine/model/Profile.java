@@ -1,9 +1,10 @@
 package com.sss.engine.model;
 
+import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import com.sss.engine.core.tags.ProfilePropertyKey;
 import com.sss.engine.core.tags.ProfilePropertyType;
@@ -51,12 +52,12 @@ public class Profile {
 	public Profile(String name) {
 		super();
 		this.name = name;
-		this.properties = new TreeMap<>();
+		this.properties = new LinkedHashMap<>();
 	}
 	public Profile() {
 		super();
 		// TODO Auto-generated constructor stub
-		this.properties = new TreeMap<>();
+		this.properties = new LinkedHashMap<>();
 	}
 	@Override
 	public String toString() {
@@ -83,7 +84,7 @@ public class Profile {
 		this.properties.put(key, value);
 	}
 	
-	public void addProperties(ProfilePropertyType key, List<ProfileProperty> item) {
+	public void addProperties(ProfilePropertyType key, Collection<ProfileProperty> item) {
 		List<ProfileProperty> value = this.properties.get(key);
 		if(value == null) {
 			value = new LinkedList<>();

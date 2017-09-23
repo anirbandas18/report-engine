@@ -11,5 +11,7 @@ import java.lang.annotation.Target;
 public @interface ProfilePropertyKey {
 	
 	public String name() default "";
+	
+	public String nameSperator() default "";
 
 }

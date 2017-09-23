@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.util.StringUtils;
 
@@ -110,6 +111,12 @@ public interface ProfileProperty extends Serializable, Comparable<ProfilePropert
 						} else {
 							value = "-";
 						} 
+					} else if(f.getType() == Set.class) {
+						// multi value profile property
+						value = val.toString();
+						value = value.substring(1, value.length() - 1);
+						value = value.replaceAll("\\s", "");
+						value = StringUtils.hasText(value) ? "\"" + value  + "\"" : "-";
 					} else {
 						if(val.toString().length() != 0) {
 							value = ann.isShorthand() ? val.toString().substring(0, 1) : val.toString();

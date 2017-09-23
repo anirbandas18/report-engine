@@ -11,5 +11,7 @@ import java.lang.annotation.Target;
 public @interface ProfilePropertyAlias {
 	
 	public ProfilePropertyType name();
+	
+	boolean isMultiValueType() default false;
 
 }

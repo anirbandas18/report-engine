@@ -10,10 +10,10 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableAsync
 public class ReportEngine {
 	
-	public static void main(String[] args) {
+	public static void main(String[] args)  {
 		SpringApplication app = new SpringApplication(ReportEngine.class);
+		app.setWebEnvironment(false);
 	    app.setBannerMode(Banner.Mode.OFF);
-	    app.setWebEnvironment(false);
 	    app.setLogStartupInfo(false);
 	    ApplicationContext context = app.run(args);
 	    int exitCode = SpringApplication.exit(context);

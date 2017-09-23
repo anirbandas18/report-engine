@@ -16,6 +16,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.sss.engine.dto.ReportMetadata;
+import com.sss.engine.model.Profile;
+import com.sss.engine.repository.ProfileRepository;
 import com.sss.engine.service.FileSystemService;
 import com.sss.engine.service.UtilityService;
 import com.sss.engine.service.WorkerService;
@@ -27,6 +29,8 @@ public class WorkerServiceImpl implements WorkerService {
 	private UtilityService util;
 	@Autowired
 	private FileSystemService fileSys;
+	@Autowired
+	private ProfileRepository repository;
 	
 	@Override
 	public Set<String> parseAndLoadDataSet(ReportMetadata metadata) throws Exception {
@@ -50,6 +54,11 @@ public class WorkerServiceImpl implements WorkerService {
 				throw new RuntimeException(e);
 			}
 		});
+		//List<ProfileProperty> layouts = repository.fetchAllDistinctProfilePropertiesOfType(ProfilePropertyType.LAYOUT_ASSIGNMENT);
+		/*for(String pn : repository.fetchAllProfileNames()) {
+			Profile p = repository.fetchProfile(pn);
+			System.out.println(p.getName());
+		}*/
 		return modelProperties;
 	}
 

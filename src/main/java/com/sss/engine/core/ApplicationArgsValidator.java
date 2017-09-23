@@ -33,7 +33,9 @@ public class ApplicationArgsValidator implements Validator {
 		Boolean status = true;
 		if(userDefined != null && !userDefined.isEmpty()) {
 			status = profilePropertyAliases.containsAll(userDefined);
-			errors.reject("invalid." + key, key + " name(s) doesn't match defined mappings for tags representing profile properties");
+			if(!status) {
+				errors.reject("invalid." + key, key + " name(s) doesn't match defined mappings for tags representing profile properties");
+			}
 		}
 		return status;
 	}
